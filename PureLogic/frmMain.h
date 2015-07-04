@@ -18,6 +18,7 @@ namespace PureLogic {
 		frmMain(void){ InitializeComponent(); }
 		void frmMain_Load(Object^  sender, EventArgs^  e);
 		void frmMain_Paint(Object^  sender, PaintEventArgs^  e);
+		void frmMain_MouseDown(Object^  sender, MouseEventArgs^  e);
 
 	protected:
 		~frmMain()
@@ -44,11 +45,11 @@ namespace PureLogic {
 			this->Text = L"frmMain";
 			this->Load += gcnew System::EventHandler(this, &frmMain::frmMain_Load);
 			this->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &frmMain::frmMain_Paint);
-
+			this->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::frmMain_MouseDown);
 
 			this->ResumeLayout(false); //resume the refresh
 
 		}
 #pragma endregion
 	};
-}
+};
