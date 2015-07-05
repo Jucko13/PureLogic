@@ -5,6 +5,7 @@
 #include "Line.h"
 class Block;
 class Line;
+value class ColorStyle;
 
 
 using namespace System::Drawing;
@@ -16,7 +17,7 @@ public class Pin {
 		virtual ~Pin();
 		void setPos(int,int);
 		void draw(Graphics ^g);
-		bool isPositive();
+		bool getState();
 		bool isConnected();
 		bool isNegated();
 		void setState(bool);

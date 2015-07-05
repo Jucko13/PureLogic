@@ -80,16 +80,20 @@
   <ItemGroup>
     <ClCompile Include="AND.cpp" />
     <ClCompile Include="Block.cpp" />
+    <ClCompile Include="ColorStyle.cpp" />
     <ClCompile Include="frmMain.cpp" />
+    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="Pin.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AND.h" />
     <ClInclude Include="Block.h" />
+    <ClInclude Include="ColorStyle.h" />
     <ClInclude Include="frmMain.h">
       <FileType>CppForm</FileType>
     </ClInclude>
+    <ClInclude Include="Input.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="Pin.h" />
   </ItemGroup>

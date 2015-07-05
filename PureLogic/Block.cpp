@@ -5,6 +5,7 @@ Block::~Block() {
 	for (Pin *i : inputs) {
 		delete i;
 	}
+	delete output;
 }
 
 
@@ -15,19 +16,30 @@ Block::Block() {
 void Block::setPos(int X, int Y) {
 	pos.X = X;
 	pos.Y = Y;
+}
 
+bool Block::pointInside(Point p) {
+	return pos.Contains(p);
+}
+
+void Block::pinAdd() {
+	
+}
+
+void Block::pinRemove() {
+	
 }
 
 Rectangle Block::getPos() {
 	return pos;
 }
 
-void Block::setColors(unsigned long  a, unsigned long  i, unsigned long  n, unsigned long  b) {
-	colorActive = a;
-	colorInactive = i;
-	colorNormal = n;
-	colorBack = b;
-}
+//void Block::setColors(unsigned long  a, unsigned long  i, unsigned long  n, unsigned long  b) {
+//	colorActive = a;
+//	colorInactive = i;
+//	colorNormal = n;
+//	colorBack = b;
+//}
 
 
 

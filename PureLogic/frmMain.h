@@ -19,12 +19,21 @@ namespace PureLogic {
 		void frmMain_Load(Object^  sender, EventArgs^  e);
 		void frmMain_Paint(Object^  sender, PaintEventArgs^  e);
 		void frmMain_MouseDown(Object^  sender, MouseEventArgs^  e);
+		void frmMain_MouseMove(Object^  sender, MouseEventArgs^  e);
+		void frmMain_MouseUp(Object^  sender, MouseEventArgs^  e);
+		void cmdAdd_Click(Object^  sender, EventArgs^  e);
+		void cmdRemove_Click(Object^  sender, EventArgs^  e);
 
 	protected:
 		~frmMain()
 		{
 			if (components){ delete components;	}
 		}
+	private: System::Windows::Forms::Button^  cmdAdd;
+	private: System::Windows::Forms::Button^  cmdRemove;
+	protected:
+
+	protected:
 
 	private:
 		System::ComponentModel::Container ^components;
@@ -36,20 +45,49 @@ namespace PureLogic {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-			this->SuspendLayout(); //pause the layout refresh
-
+			this->cmdAdd = (gcnew System::Windows::Forms::Button());
+			this->cmdRemove = (gcnew System::Windows::Forms::Button());
+			this->SuspendLayout();
+			// 
+			// cmdAdd
+			// 
+			this->cmdAdd->Location = System::Drawing::Point(344, 12);
+			this->cmdAdd->Name = L"cmdAdd";
+			this->cmdAdd->Size = System::Drawing::Size(153, 24);
+			this->cmdAdd->TabIndex = 0;
+			this->cmdAdd->Text = L"Add Input";
+			this->cmdAdd->UseVisualStyleBackColor = true;
+			this->cmdAdd->Click += gcnew System::EventHandler(this, &frmMain::cmdAdd_Click);
+			// 
+			// cmdRemove
+			// 
+			this->cmdRemove->Location = System::Drawing::Point(344, 42);
+			this->cmdRemove->Name = L"cmdRemove";
+			this->cmdRemove->Size = System::Drawing::Size(153, 24);
+			this->cmdRemove->TabIndex = 1;
+			this->cmdRemove->Text = L"Remove Input";
+			this->cmdRemove->UseVisualStyleBackColor = true;
+			this->cmdRemove->Click += gcnew System::EventHandler(this, &frmMain::cmdRemove_Click);
+			// 
+			// frmMain
+			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(284, 262);
+			this->ClientSize = System::Drawing::Size(509, 318);
+			this->Controls->Add(this->cmdRemove);
+			this->Controls->Add(this->cmdAdd);
+			this->DoubleBuffered = true;
 			this->Name = L"frmMain";
 			this->Text = L"frmMain";
 			this->Load += gcnew System::EventHandler(this, &frmMain::frmMain_Load);
 			this->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &frmMain::frmMain_Paint);
 			this->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::frmMain_MouseDown);
-
-			this->ResumeLayout(false); //resume the refresh
+			this->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::frmMain_MouseMove);
+			this->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::frmMain_MouseUp);
+			this->ResumeLayout(false);
 
 		}
 #pragma endregion
+
 	};
 };

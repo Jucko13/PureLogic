@@ -1,27 +1,25 @@
 #pragma once
-
 #include "Block.h"
 
 using namespace System::Drawing;
 
-class AND : public Block {
+
+class Input : public Block {
 	public:
-		AND();
-		virtual ~AND();
+		Input();
+		virtual ~Input();
 
 		bool execute() override;
 		void draw(Graphics ^g) override;
-
-		void pinAdd() override;
-		void pinRemove() override;
 
 		void mouseDown(Point p) override;
 		void mouseUp(Point p) override;
 		void mouseMove(Point p) override;
 
-		const bool mayAddPin = true;
+		const bool mayAddPin = false;
+
 	private:
-		const int pinsMin = 1;
-		const int pinsMax = 10;
+		int pressState = 0;
+
 };
 

@@ -11,8 +11,17 @@ AND::AND() {
 	active = false;
 
 	pinAdd();
-	output = new Pin(this,0,0,1);
+	output = new Pin(this,0,6,1);
+	output->setNegate(true);
 	simulating = true;
+}
+
+AND::~AND() {
+	//delete output;
+
+	//for (Pin *i : inputs) {
+	//	delete i;
+	//}
 }
 
 void AND::pinAdd() {
@@ -21,10 +30,32 @@ void AND::pinAdd() {
 		inputs.push_back(new Pin(this, 0, i * 9 + 6, 0));
 }
 
+void AND::mouseDown(Point p) {
+	Point ^relative = gcnew Point(p.X - pos.X, p.Y - pos.Y);
+
+	if (relative->Y > pos.Height - 10 && relative->Y < pos.Height) {
+		if (relative->X > 2 && relative->X < 8) {
+			pinAdd();
+		} else if (relative->X > 8 && relative->X < 14) {
+			pinRemove();
+		}
+	}
+}
+
+void AND::mouseUp(Point p) {
+
+}
+
+void AND::mouseMove(Point p) {
+
+}
+
+
 void AND::pinRemove() {
 	int i = inputs.size();
 	if (i - 1 >= pinsMin) {
 		Pin * p = inputs[i - 1];
+		if (p->isConnected()) return;
 		inputs.pop_back();
 		delete p;
 		//
@@ -34,14 +65,18 @@ void AND::pinRemove() {
 
 bool AND::execute() {
 	for (Pin *i : inputs) {
-		if (i->isPositive() == false) {
-			active = false;
-			output->setState(false);
+		if (i->getState() == false) {
+			if (active != false){
+				active = false;
+				output->setState(false);
+			}
 			return false;
 		}
 	}
-	output->setState(true);
-	active = true;
+	if (active != true) {
+		output->setState(true);
+		active = true;
+	}
 	return true;
 }
 
@@ -62,20 +97,20 @@ void AND::draw(Graphics ^g) {
 
 
 	//draw background of block
-	b->Color = ColorTranslator::FromOle(colorBack);
+	b->Color = ColorStyle::colorBack;
 	g->FillRectangle(b, pos.X, pos.Y, pos.Width, pos.Height); //35
 
 	//draw border of block
 	if (simulating) {
 		if (active) {
-			p->Color = ColorTranslator::FromOle(colorActive);
+			p->Color = ColorStyle::colorActive;
 			b->Color = p->Color;
 		} else {
-			p->Color = ColorTranslator::FromOle(colorInactive);
+			p->Color = ColorStyle::colorInactive;
 			b->Color = p->Color;
 		}
 	}else {
-		p->Color = ColorTranslator::FromOle(colorNormal);
+		p->Color = ColorStyle::colorNormal;
 		b->Color = p->Color;
 	}
 	g->DrawRectangle(p, pos.X, pos.Y, pos.Width, pos.Height); //35
@@ -85,14 +120,18 @@ void AND::draw(Graphics ^g) {
 	StringFormat ^ sf = gcnew StringFormat();
 	sf->LineAlignment = System::Drawing::StringAlignment::Far;
 
-	//draw the Add button to add a pin on the input
-	if (inputs.size() > 1 && inputs.size() < 10) {
-		g->DrawString("+-", f, b, RectangleF(pos.X, pos.Y, pos.Width, pos.Height), sf);
-	} else if (inputs.size() > 1) {
-		g->DrawString(" -", f, b, RectangleF(pos.X, pos.Y, pos.Width, pos.Height), sf);
+	int inputsize = inputs.size() - 1;
+
+	if (inputsize >= 0 && inputsize < 9) {
+		if (!inputs[inputsize]->isConnected()) {
+			g->DrawString("+-", f, b, RectangleF(pos.X, pos.Y, pos.Width, pos.Height), sf);
+		} else {
+			g->DrawString("+", f, b, RectangleF(pos.X, pos.Y, pos.Width, pos.Height), sf);
+		}
 	} else {
-		g->DrawString("+", f, b, RectangleF(pos.X, pos.Y, pos.Width, pos.Height), sf);
+		g->DrawString(" -", f, b, RectangleF(pos.X, pos.Y, pos.Width, pos.Height), sf);
 	}
+
 
 	sf->Alignment = System::Drawing::StringAlignment::Center;
 	sf->LineAlignment = System::Drawing::StringAlignment::Center;

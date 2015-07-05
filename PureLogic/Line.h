@@ -3,6 +3,7 @@
 
 #include "Pin.h"
 class Pin;
+value class ColorStyle;
 
 using namespace System::Drawing;
 

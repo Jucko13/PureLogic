@@ -11,7 +11,7 @@ Pin::Pin(Block *b, int X, int Y, bool o) {
 	connectedBlock = b;
 	isOutput = o;
 	positive = true;
-	negate = true;
+	negate = false;
 }
 
 Pin::~Pin() {
@@ -23,11 +23,11 @@ bool Pin::isConnected() {
 }
 
 void Pin::setState(bool newState) {
-	positive = newState ^ negate;
+	positive = newState;
 	if (isOutput) {
 		if (isConnected()) {
 			for (Line *i : lines) {
-				i->setState(positive);
+				i->setState(getState());
 			}
 		}
 	} else {
@@ -45,10 +45,10 @@ void Pin::setPos(int X, int Y) {
 }
 
 Point Pin::getPos() {
-	return Point(pos.X,pos.Y);
+	return pos.Location;
 }
 
-bool Pin::isPositive() {
+bool Pin::getState() {
 	return positive ^ negate;
 }
 
@@ -70,17 +70,18 @@ void Pin::draw(Graphics ^g) {
 	Pen ^p;
 	Brush ^n;
 
-	if (connectedBlock->simulating && (isConnected() || isOutput)) {
-		if (positive ^ negate) {
-			p = gcnew Pen(ColorTranslator::FromOle(connectedBlock->colorActive));
-			n = gcnew SolidBrush(ColorTranslator::FromOle(connectedBlock->colorInactive));
+	if (connectedBlock->simulating && isConnected() || isOutput) {
+		
+		if ((!isOutput && positive) || (isOutput && positive ^ negate)) {
+			p = gcnew Pen(ColorStyle::colorActive);
+			n = gcnew SolidBrush(ColorStyle::colorInactive);
 		} else {
-			p = gcnew Pen(ColorTranslator::FromOle(connectedBlock->colorInactive));
-			n = gcnew SolidBrush(ColorTranslator::FromOle(connectedBlock->colorActive));
+			p = gcnew Pen(ColorStyle::colorInactive);
+			n = gcnew SolidBrush(ColorStyle::colorActive);
 		}
 	}else{
-		p = gcnew Pen(ColorTranslator::FromOle(connectedBlock->colorNormal));
-		n = gcnew SolidBrush(ColorTranslator::FromOle(connectedBlock->colorNormal));
+		p = gcnew Pen(ColorStyle::colorNormal);
+		n = gcnew SolidBrush(ColorStyle::colorNormal);
 	}
 
 	Rectangle blockPos = (*connectedBlock).getPos();
@@ -88,7 +89,9 @@ void Pin::draw(Graphics ^g) {
 
 	if (isOutput) {
 		pos.X = offsetPos.X + blockPos.X + blockPos.Width + 10;
-		pos.Y = offsetPos.Y + blockPos.Y + blockPos.Height / 2;
+		pos.Y = offsetPos.Y + blockPos.Y;
+		//pos.Y = offsetPos.Y + blockPos.Y + blockPos.Height / 2;
+
 		pos.Width = 10;
 		pos.Height = 0;
 

@@ -20,15 +20,16 @@ void Line::draw(Graphics ^g) {
 	Pen ^p;
 	Brush ^n;
 
+	if (Input == 0 || Output == 0) return;
+
 	Point pos1 = Input->getPos();
 	Point pos2 = Output->getPos();
 
-
 	if (positive) {
-		p = gcnew Pen(ColorTranslator::FromOle(Input->getBlock()->colorActive));
+		p = gcnew Pen(ColorStyle::colorActive);
 		//n = gcnew SolidBrush(ColorTranslator::FromOle(connectedBlock->colorInactive));
 	} else {
-		p = gcnew Pen(ColorTranslator::FromOle(Input->getBlock()->colorInactive));
+		p = gcnew Pen(ColorStyle::colorInactive);
 		//n = gcnew SolidBrush(ColorTranslator::FromOle(connectedBlock->colorActive));
 	}
 
@@ -37,7 +38,6 @@ void Line::draw(Graphics ^g) {
 
 void Line::setInput(Pin *b) {
 	Input = b;
-
 }
 
 void Line::setOutput(Pin *b) {
