@@ -32,6 +32,7 @@ class Block abstract {
 		virtual void pinAdd();
 		virtual void pinRemove();
 		bool pointInside(Point p);
+		Pin * getSelectedPin(Point p);
 
 		void attachLine(Line *p, int pinNum, int isOutput);
 		void detachLine(Line *p);

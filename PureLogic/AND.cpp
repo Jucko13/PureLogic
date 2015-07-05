@@ -94,7 +94,6 @@ void AND::draw(Graphics ^g) {
 		i->draw(g);
 	}
 
-
 	//draw background of block
 	g->FillRectangle(ColorStyle::brushBack, pos.X, pos.Y, pos.Width, pos.Height); //35
 

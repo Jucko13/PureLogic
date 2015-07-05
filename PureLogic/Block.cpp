@@ -18,6 +18,29 @@ void Block::setPos(int X, int Y) {
 	pos.Y = Y;
 }
 
+Pin * Block::getSelectedPin(Point p) {
+	Point pinpos;
+
+	for (Pin *i : inputs) {
+		pinpos = i->getPos();
+		if (pinpos.X <= p.X && pinpos.X + 10 >= p.X) {
+			if (p.Y <= pinpos.Y + 2 && p.Y >= pinpos.Y - 2) {
+				return i;
+			}
+		}
+	}
+	if (output) {
+		pinpos = output->getPos();
+		if (pinpos.X <= p.X && pinpos.X + 10 >= p.X) {
+			if (p.Y <= pinpos.Y + 2 && p.Y >= pinpos.Y - 2) {
+				return output;
+			}
+		}
+	}
+
+	return 0;
+}
+
 bool Block::pointInside(Point p) {
 	return pos.Contains(p);
 }
