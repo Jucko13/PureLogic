@@ -6,7 +6,7 @@
 #include "Input.h"
 #include "ColorStyle.h"
 
-using namespace System;
+//using namespace System;
 using namespace System::Windows::Forms;
 using namespace PureLogic;
 
@@ -50,6 +50,24 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	ColorStyle::colorInactive = Color(Color::FromArgb(0, 0, 255));
 	ColorStyle::colorNormal = Color(Color::FromArgb(0, 0, 0));
 	ColorStyle::colorBack = Color(Color::FromArgb(255, 222, 140));
+
+	ColorStyle::brushActive = gcnew SolidBrush(ColorStyle::colorActive);
+	ColorStyle::brushInactive = gcnew SolidBrush(ColorStyle::colorInactive);
+	ColorStyle::brushNormal = gcnew SolidBrush(ColorStyle::colorNormal);
+	ColorStyle::brushBack = gcnew SolidBrush(ColorStyle::colorBack);
+
+	ColorStyle::penActive = gcnew Pen(ColorStyle::colorActive);
+	ColorStyle::penInactive = gcnew Pen(ColorStyle::colorInactive);
+	ColorStyle::penNormal = gcnew Pen(ColorStyle::colorNormal);
+	ColorStyle::penBack = gcnew Pen(ColorStyle::colorBack);
+
+	ColorStyle::fontFamily = gcnew System::Drawing::Font("Courier New",8.0);
+	ColorStyle::fontFormatFar = gcnew StringFormat();
+	ColorStyle::fontFormatFar->LineAlignment = System::Drawing::StringAlignment::Far;
+
+	ColorStyle::fontFormatCenter = gcnew StringFormat();
+	ColorStyle::fontFormatCenter->LineAlignment = System::Drawing::StringAlignment::Center;
+	ColorStyle::fontFormatCenter->Alignment = System::Drawing::StringAlignment::Center;
 
 	inpu.setPos(50, 20);
 	inpu2.setPos(50, 56);

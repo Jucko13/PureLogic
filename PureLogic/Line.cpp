@@ -18,7 +18,7 @@ Line::~Line() {
 
 void Line::draw(Graphics ^g) {
 	Pen ^p;
-	Brush ^n;
+	//Brush ^n;
 
 	if (Input == 0 || Output == 0) return;
 

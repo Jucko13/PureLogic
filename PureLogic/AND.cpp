@@ -81,9 +81,8 @@ bool AND::execute() {
 }
 
 void AND::draw(Graphics ^g) {
-	SolidBrush ^b = gcnew SolidBrush(Color::Black);
-	Pen ^p = gcnew Pen(Color::Black);
-
+	Brush ^b;
+	Pen ^p;
 
 	pos.Height = (inputs.size()-1) * 9 + 12;
 	if (pos.Height < 21) pos.Height = 21;
@@ -97,45 +96,38 @@ void AND::draw(Graphics ^g) {
 
 
 	//draw background of block
-	b->Color = ColorStyle::colorBack;
-	g->FillRectangle(b, pos.X, pos.Y, pos.Width, pos.Height); //35
+	g->FillRectangle(ColorStyle::brushBack, pos.X, pos.Y, pos.Width, pos.Height); //35
 
 	//draw border of block
 	if (simulating) {
 		if (active) {
-			p->Color = ColorStyle::colorActive;
-			b->Color = p->Color;
+			p = ColorStyle::penActive;
+			b = ColorStyle::brushActive;
 		} else {
-			p->Color = ColorStyle::colorInactive;
-			b->Color = p->Color;
+			p = ColorStyle::penInactive;
+			b = ColorStyle::brushInactive;
 		}
 	}else {
-		p->Color = ColorStyle::colorNormal;
-		b->Color = p->Color;
+		p = ColorStyle::penNormal;
+		b = ColorStyle::brushNormal;
 	}
 	g->DrawRectangle(p, pos.X, pos.Y, pos.Width, pos.Height); //35
 
 
-	Font ^ f = gcnew Font("Courier New",8.0);
-	StringFormat ^ sf = gcnew StringFormat();
-	sf->LineAlignment = System::Drawing::StringAlignment::Far;
-
+	
 	int inputsize = inputs.size() - 1;
 
 	if (inputsize >= 0 && inputsize < 9) {
 		if (!inputs[inputsize]->isConnected()) {
-			g->DrawString("+-", f, b, RectangleF(pos.X, pos.Y, pos.Width, pos.Height), sf);
+			g->DrawString("+-", ColorStyle::fontFamily, b, RectangleF(pos.X, pos.Y, pos.Width, pos.Height), ColorStyle::fontFormatFar);
 		} else {
-			g->DrawString("+", f, b, RectangleF(pos.X, pos.Y, pos.Width, pos.Height), sf);
+			g->DrawString("+", ColorStyle::fontFamily, b, RectangleF(pos.X, pos.Y, pos.Width, pos.Height), ColorStyle::fontFormatFar);
 		}
 	} else {
-		g->DrawString(" -", f, b, RectangleF(pos.X, pos.Y, pos.Width, pos.Height), sf);
+		g->DrawString(" -", ColorStyle::fontFamily, b, RectangleF(pos.X, pos.Y, pos.Width, pos.Height), ColorStyle::fontFormatFar);
 	}
 
-
-	sf->Alignment = System::Drawing::StringAlignment::Center;
-	sf->LineAlignment = System::Drawing::StringAlignment::Center;
-	g->DrawString("&", f, b, RectangleF(pos.X, pos.Y, pos.Width, 12), sf);
+	g->DrawString("&", ColorStyle::fontFamily, b, RectangleF(pos.X, pos.Y, pos.Width, 12), ColorStyle::fontFormatCenter);
 	
 
 
