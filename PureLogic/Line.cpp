@@ -33,7 +33,7 @@ void Line::draw(Graphics ^g) {
 		//n = gcnew SolidBrush(ColorTranslator::FromOle(connectedBlock->colorActive));
 	}
 
-	g->DrawLine(p, pos1.X, pos1.Y, pos2.X, pos2.Y);
+	g->DrawLine(p, pos1.X, pos1.Y, pos2.X + 10, pos2.Y);
 }
 
 void Line::setInput(Pin *b) {

@@ -19,6 +19,7 @@ public class Pin {
 		void draw(Graphics ^g);
 		bool getState();
 		bool isConnected();
+		bool isOutput();
 		bool isNegated();
 		void setState(bool);
 		void setNegate(bool);
@@ -33,7 +34,7 @@ public class Pin {
 
 		bool positive;
 		Block * connectedBlock;
-		bool isOutput;
+		bool output;
 		bool negate;
 
 		std::vector<Line *> lines;
