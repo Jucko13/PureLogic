@@ -10,12 +10,17 @@ Pin::Pin(Block *b, int X, int Y, bool o) {
 	offsetPos.Y = Y;
 	connectedBlock = b;
 	output = o;
-	positive = true;
+	positive = false;
 	negate = false;
+	border = false;
 }
 
 Pin::~Pin() {
 	
+}
+
+void Pin::setBorder(bool newState) {
+	border = newState;
 }
 
 bool Pin::isConnected() {
@@ -42,10 +47,14 @@ void Pin::setState(bool newState) {
 void Pin::setNegate(bool newState) {
 	if (negate != newState) {
 		negate = newState;
-		for (Line *i : lines) {
-			i->setState(getState());
+		if (output) {
+			for (Line *i : lines) {
+				i->setState(getState());
+			}
+		} else {
+			connectedBlock->execute();
 		}
-		connectedBlock->execute();
+		
 	}
 }
 
@@ -84,8 +93,7 @@ void Pin::draw(Graphics ^g) {
 	Pen ^p;
 	Brush ^n;
 
-	if (connectedBlock->simulating && isConnected() || output) {
-		
+	if (PS::simulating && (isConnected() || output)) {
 		if ((!output && positive) || (output && positive ^ negate)) {
 			p = gcnew Pen(ColorStyle::colorActive);
 			n = gcnew SolidBrush(ColorStyle::colorInactive);
@@ -122,5 +130,8 @@ void Pin::draw(Graphics ^g) {
 		if (negate) g->FillRectangle(n, pos.X - 4 + pos.Width, pos.Y - 2, 4, 5);
 	}
 
+	if (border) {
+		g->DrawRectangle(ColorStyle::penInactive,pos.X-4,pos.Y-4,18,8);
+	}
 
 }

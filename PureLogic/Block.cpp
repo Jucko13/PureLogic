@@ -9,8 +9,9 @@ Block::~Block() {
 }
 
 
-Block::Block() {
-	
+Block::Block(std::string n): name(n) {
+	selected = false;
+	active = false;
 }
 
 void Block::setPos(int X, int Y) {
@@ -18,21 +19,25 @@ void Block::setPos(int X, int Y) {
 	pos.Y = Y;
 }
 
+std::string Block::getName() {
+	return name;
+}
+
 Pin * Block::getSelectedPin(Point p) {
 	Point pinpos;
 
 	for (Pin *i : inputs) {
 		pinpos = i->getPos();
-		if (pinpos.X <= p.X && pinpos.X + 10 >= p.X) {
-			if (p.Y <= pinpos.Y + 2 && p.Y >= pinpos.Y - 2) {
+		if (pinpos.X-4 <= p.X && pinpos.X + 14 >= p.X) {
+			if (p.Y <= pinpos.Y + 4 && p.Y >= pinpos.Y - 4) {
 				return i;
 			}
 		}
 	}
 	if (output) {
 		pinpos = output->getPos();
-		if (pinpos.X <= p.X && pinpos.X + 10 >= p.X) {
-			if (p.Y <= pinpos.Y + 2 && p.Y >= pinpos.Y - 2) {
+		if (pinpos.X-4 <= p.X && pinpos.X + 14 >= p.X) {
+			if (p.Y <= pinpos.Y + 4 && p.Y >= pinpos.Y - 4) {
 				return output;
 			}
 		}

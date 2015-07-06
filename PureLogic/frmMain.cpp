@@ -5,6 +5,7 @@
 #include "Line.h"
 #include "Input.h"
 #include "ColorStyle.h"
+#include "PS.h"
 
 //using namespace System;
 using namespace System::Windows::Forms;
@@ -23,10 +24,14 @@ using namespace System::Drawing;
 
 Point dragStart;
 Point dragCurrent;
+Pin * dragStartPin;
+
 bool isDragging = false;
 
 vector<Line *> connectionLines;
 vector<Block *> blocks;
+
+bool isRefreshing = false;
 
 [STAThread]
 int main(array<String^> ^args) {
@@ -39,10 +44,51 @@ int main(array<String^> ^args) {
 	return 0;
 }
 
+Pin * getPinAtPoint(Point p) {
+	Pin * pinReturn;
+	for (Block * b : blocks) {
+		pinReturn = b->getSelectedPin(p);
+		if (pinReturn != 0) break;
+	}
+	return pinReturn;
+}
+
+Line * getLineAtPoint(Point p) {
+	for (Line * b : connectionLines) {
+		if (b->isPointOnLine(p)) {
+			return b;
+		}
+	}
+	return 0;
+}
+
+
 unsigned long createRGB(int r, int g, int b) {
 	return r + (g * 256) + (b * 256 * 256);
 }
 
+void frmMain::timerRefresh_Tick(Object^ state, System::Timers::ElapsedEventArgs^ e) {
+	try {
+		this->Invoke(gcnew MethodInvoker(this, &frmMain::Redraw));
+	} catch (System::ObjectDisposedException ^e) {
+		
+	}
+}
+
+void frmMain::Redraw() {
+	if (PS::refreshNeeded) {
+		frmMain::Refresh();
+		PS::refreshNeeded = false;
+	}
+}
+
+void frmMain::frmMain_Unload(Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
+	PS::timerRefresh->Stop();
+	PS::timerRefresh->Enabled = false;
+	PS::timerRefresh->Close();
+
+	delete PS::timerRefresh;
+}
 
 void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	//MessageBox::Show("Startup test");
@@ -52,16 +98,19 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	ColorStyle::colorInactive = Color(Color::FromArgb(0, 0, 255));
 	ColorStyle::colorNormal = Color(Color::FromArgb(0, 0, 0));
 	ColorStyle::colorBack = Color(Color::FromArgb(255, 222, 140));
+	ColorStyle::colorMouseOver = Color(Color::FromArgb(0, 255, 0));
 
 	ColorStyle::brushActive = gcnew SolidBrush(ColorStyle::colorActive);
 	ColorStyle::brushInactive = gcnew SolidBrush(ColorStyle::colorInactive);
 	ColorStyle::brushNormal = gcnew SolidBrush(ColorStyle::colorNormal);
 	ColorStyle::brushBack = gcnew SolidBrush(ColorStyle::colorBack);
+	ColorStyle::brushMouseOver = gcnew SolidBrush(ColorStyle::colorMouseOver);
 
 	ColorStyle::penActive = gcnew Pen(ColorStyle::colorActive);
 	ColorStyle::penInactive = gcnew Pen(ColorStyle::colorInactive);
 	ColorStyle::penNormal = gcnew Pen(ColorStyle::colorNormal);
 	ColorStyle::penBack = gcnew Pen(ColorStyle::colorBack);
+	ColorStyle::penMouseOver = gcnew Pen(ColorStyle::colorMouseOver);
 
 	ColorStyle::fontFamily = gcnew System::Drawing::Font("Courier New",8.0);
 	ColorStyle::fontFormatFar = gcnew StringFormat();
@@ -71,74 +120,145 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	ColorStyle::fontFormatCenter->LineAlignment = System::Drawing::StringAlignment::Center;
 	ColorStyle::fontFormatCenter->Alignment = System::Drawing::StringAlignment::Center;
 
-	connectionLines.push_back(new Line);
-	connectionLines.push_back(new Line);
-	//connectionLines.push_back(new Line);
+	PS::simulating = false;
+	//PS::TooltipMessage = new string;
+	//PS::TooltipMessage->assign("lawla");
+	PS::TooltipMessage = "";
+	PS::TooltipVisible = false;
+	
+	PS::timerRefresh = gcnew System::Timers::Timer(30);
+	PS::timerRefresh->BeginInit();
+	PS::timerRefresh->AutoReset = true;
+	PS::timerRefresh->Elapsed += gcnew System::Timers::ElapsedEventHandler(this, &frmMain::timerRefresh_Tick);
+	PS::timerRefresh->EndInit();
 
-	blocks.push_back(new Input); //inpu
-	blocks[0]->setPos(50, 20);
-	blocks[0]->attachLine(connectionLines[0], -1, 1);
+	PS::timerRefresh->Start();
 
+	int i = 0;
+	int j = 0;
+	int t = 0;
 
-	blocks.push_back(new Input); //inpu2
-	blocks[1]->setPos(50, 56);
-	blocks[1]->attachLine(connectionLines[1], -1, 1);
+	for (j = 0; j < 4; j++) {
+		for (i = 0; i < 10*4; i+=4) {
+			
+			connectionLines.push_back(new Line);
+			connectionLines.push_back(new Line);
+			connectionLines.push_back(new Line);
+			connectionLines.push_back(new Line);
 
-	blocks.push_back(new AND); //mygate
-	blocks[2]->setPos(150, 20);
-	blocks[2]->attachLine(connectionLines[0], -1, 0); //input
-	blocks[2]->pinAdd();
-	blocks[2]->pinAdd();
-	blocks[2]->pinAdd();
-	blocks[2]->pinAdd();
-	blocks[2]->inputs[4]->setNegate(true);
-	blocks[2]->inputs[0]->setNegate(true);
-	blocks[2]->attachLine(connectionLines[1], 4, 0); //input
-	//blocks[2]->attachLine(connectionLines[2], -1, 1); //output
+			blocks.push_back(new Input); //inpu
+			blocks[t]->setPos(50 + j * 250, 20 + (i / 4) * 70);
+			blocks[t]->attachLine(connectionLines[t], -1, 1);
+			blocks[t]->attachLine(connectionLines[t + 3], -1, 1);
 
-	blocks.push_back(new AND); //mygate2
-	blocks[3]->setPos(220, 20);
-	//blocks[3]->attachLine(connectionLines[2], -1, 0);
+			blocks.push_back(new Input); //inpu2
+			blocks[t + 1]->setPos(50 + j * 250, 56 + (i / 4) * 70);
+			blocks[t + 1]->attachLine(connectionLines[t + 1], -1, 1);
+
+			blocks.push_back(new AND); //mygate
+			blocks[t + 2]->setPos(150 + j * 250, 20 + (i / 4) * 70);
+			blocks[t + 2]->attachLine(connectionLines[t], -1, 0); //input
+			blocks[t + 2]->pinAdd();
+			blocks[t + 2]->pinAdd();
+			blocks[t + 2]->pinAdd();
+			blocks[t + 2]->pinAdd();
+			blocks[t + 2]->inputs[4]->setNegate(true);
+			//blocks[i + 2]->inputs[0]->setNegate(true);
+			blocks[t + 2]->attachLine(connectionLines[t + 1], 4, 0); //input
+			blocks[t + 2]->attachLine(connectionLines[t + 2], -1, 1); //output
+			blocks[t + 2]->attachLine(connectionLines[t + 3], -1, 0);
+
+			blocks.push_back(new AND); //mygate2
+			blocks[t + 3]->setPos(220 + j * 250, 20 + (i / 4) * 70);
+			blocks[t + 3]->attachLine(connectionLines[t + 2], -1, 0);
+			t += 4;
+		}
+		
+	}
 
 	for (Block * b : blocks) {
 		b->execute();
 	}
 
+	PS::refreshNeeded = true;
 
-	/*
-	inpu.execute();
-	inpu2.execute();
-	mygate.execute();
-	mygate2.execute();*/
 }
 
 void frmMain::frmMain_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
 	if (e->Button == System::Windows::Forms::MouseButtons::Left) {
 
-		//if (mygate.pointInside(e->Location)) mygate.mouseDown(e->Location);
-		//if (mygate2.pointInside(e->Location)) mygate2.mouseDown(e->Location);
-		//if (inpu.pointInside(e->Location)) inpu.mouseDown(e->Location);
-		//if (inpu2.pointInside(e->Location)) inpu2.mouseDown(e->Location);
-
 		for (Block * b : blocks) {
 			if (b->pointInside(e->Location)) b->mouseDown(e->Location);
 		}
 
+
 	} else if (e->Button == System::Windows::Forms::MouseButtons::Right) {
-		dragStart = e->Location;
-		dragCurrent = e->Location;
-		isDragging = true;
+		
+		dragStartPin = getPinAtPoint(e->Location);
+		if (dragStartPin != 0) {
+			dragStart = e->Location;
+			dragCurrent = e->Location;
+			isDragging = true;
+			frmMain_MouseMove(sender, e);
+		}
 	}
 
 	frmMain::Refresh();
 }
 
 void frmMain::frmMain_MouseMove(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
+	
+	
+
+	if (!isDragging) {
+		if (PS::mouseOverLine != 0) {
+			PS::mouseOverLine->setMouseOver(false);
+		}
+
+		PS::mouseOverLine = getLineAtPoint(e->Location);
+		if (PS::mouseOverLine != 0) {
+			PS::mouseOverLine->setMouseOver(true);
+		}
+	}
+
+	if (PS::mouseOverPin != 0) {
+		PS::mouseOverPin->setBorder(false);
+		PS::TooltipVisible = false;
+	}
+
+	PS::mouseOverPin = getPinAtPoint(e->Location);
+	if (PS::mouseOverPin != 0) {
+		
+		if (isDragging) {
+			if (PS::mouseOverPin == dragStartPin) {
+				PS::TooltipVisible = true;
+				PS::TooltipMessage = "Release to Negate PIN";
+			} else if (!(PS::mouseOverPin->isOutput() ^ dragStartPin->isOutput())) {
+				PS::TooltipVisible = true;
+				PS::TooltipMessage = "PIN connection not allowed!\nOne INPUT PIN and one OUTPUT PIN!";
+			} else if (!PS::mouseOverPin->isOutput() && PS::mouseOverPin->isConnected() || !dragStartPin->isOutput() && dragStartPin->isConnected()) {
+				PS::TooltipVisible = true;
+				PS::TooltipMessage = "PIN connection not allowed!\nINPUT PIN Already Connected!";
+			} else {
+				PS::TooltipVisible = false;
+				PS::TooltipMessage = "";
+			}
+		}
+		PS::mouseOverPin->setBorder(true);
+	}
+
+	
+
+
 	if (isDragging) {
 		dragCurrent = e->Location;
-		frmMain::Refresh();
 	}
+
+	PS::TooltipPos = e->Location;
+
+	PS::refreshNeeded = true;
 }
+
 
 void frmMain::frmMain_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
 	Pin * pin1;
@@ -146,12 +266,6 @@ void frmMain::frmMain_MouseUp(System::Object^ sender, System::Windows::Forms::Mo
 	Pin * pintemp;
 
 	if (e->Button == System::Windows::Forms::MouseButtons::Left) {
-
-		//mygate.mouseUp(e->Location);
-		//mygate2.mouseUp(e->Location);
-		//inpu.mouseUp(e->Location);
-		//inpu2.mouseUp(e->Location);
-
 		for (Block * b : blocks) {
 			b->mouseUp(e->Location);
 		}
@@ -160,15 +274,8 @@ void frmMain::frmMain_MouseUp(System::Object^ sender, System::Windows::Forms::Mo
 		dragCurrent = e->Location;
 		isDragging = false;
 
-		for (Block * b : blocks) {
-			pin1 = b->getSelectedPin(dragStart);
-			if (pin1 != 0) break;
-		}
-
-		for (Block * b : blocks) {
-			pin2 = b->getSelectedPin(dragCurrent);
-			if (pin2 != 0) break;
-		}
+		pin1 = getPinAtPoint(dragStart);
+		pin2 = getPinAtPoint(dragCurrent);
 
 		//if we found the pins, connect them if we have one input and one output
 		if (pin1 != 0 && pin2 != 0) {
@@ -190,27 +297,19 @@ void frmMain::frmMain_MouseUp(System::Object^ sender, System::Windows::Forms::Mo
 
 					l->setState(pin1->getState());
 				} else {
-					MessageBox::Show("Already Connected!");
+					//MessageBox::Show("Already Connected!");
 				}
 				
 
 			} else {
-				if (pin1 = pin2) {
+				if (pin1 == pin2) {
 					pin1->setNegate(!pin1->isNegated());
 				} else {
-					MessageBox::Show("Need one input and one output!");
+					//MessageBox::Show("Need one input and one output!");
 				}
 				
 			}
 		}
-
-		//this needs to happen to create a line and connect it:
-		//connectionLines.push_back(new Line);
-		//blocks[2]->attachLine(connectionLines[2], -1, 1); //output
-		//blocks[3]->attachLine(connectionLines[2], -1, 0);
-
-
-
 
 	}
 
@@ -219,27 +318,20 @@ void frmMain::frmMain_MouseUp(System::Object^ sender, System::Windows::Forms::Mo
 
 
 void frmMain::cmdAdd_Click(Object^  sender, EventArgs^  e) {
-	//mygate.pinAdd();
-	frmMain::Refresh();
+	PS::simulating = !PS::simulating;
+
+	if (!isRefreshing) frmMain::Refresh();
 }
 
 void frmMain::cmdRemove_Click(Object^  sender, EventArgs^  e) {
-	//mygate.pinRemove();
-	frmMain::Refresh();
+	if (!isRefreshing) frmMain::Refresh();
 }
 
 
 
 void frmMain::frmMain_Paint(Object^  sender, PaintEventArgs^  e) {
-	System::Drawing::Graphics ^g = e->Graphics;
 
-	//array<Color> ^blockColors = gcnew array<Color>(4) {
-	//	Color::FromArgb(255, 222, 140), //background color
-	//		Color::FromArgb(0, 0, 0),		//border color normal
-	//		Color::FromArgb(255, 0, 0),		//border color active
-	//		Color::FromArgb(0, 0, 255)		//border color inactive
-	//};
-	
+	System::Drawing::Graphics ^g = e->Graphics;
 	Drawing::SolidBrush ^programBackground = gcnew Drawing::SolidBrush(Color::FromArgb(180, 180, 180));
 	Drawing::Pen ^blockBorder = gcnew Pen(Drawing::Color::Black);
 	
@@ -248,13 +340,6 @@ void frmMain::frmMain_Paint(Object^  sender, PaintEventArgs^  e) {
 
 	//paint background
 	g->FillRectangle(programBackground, frmMain::ClientRectangle);
-
-	//inpu.draw(g);
-	//inpu2.draw(g);
-
-	//mygate.draw(g);
-	//mygate2.draw(g);
-	
 
 	for (Block * b : blocks) {
 		b->draw(g);
@@ -268,31 +353,29 @@ void frmMain::frmMain_Paint(Object^  sender, PaintEventArgs^  e) {
 		g->DrawLine(blockBorder, dragStart, dragCurrent);
 	}
 	
+	if (PS::TooltipVisible) {
+		System::Drawing::SizeF sSize = g->MeasureString(PS::TooltipMessage, ColorStyle::fontFamily);
 
-	//
-	//
-	//////draw background of block
-	////b->Color = blockColors[0];
-	////g->FillRectangle(b, 40, 40, 25, 35);
-	//
-	////draw border of block
-	//p->Color = blockColors[3];
-	//g->DrawRectangle(p, 40, 40, 25, 35);
+		Point tooltip = Point(PS::TooltipPos.X - (int)sSize.Width - 10, PS::TooltipPos.Y+15);
 
+		if (tooltip.X < 0) {
+			tooltip.X = 0;
+		} else if (tooltip.X + sSize.Width + 6 > ClientRectangle.Width) {
+			tooltip.X = ClientRectangle.Width - (sSize.Width + 6);
+		}
 
-	////draw inputs
-	//g->DrawLine(p, 30, 44, 40, 44);
-	//g->DrawLine(p, 30, 53, 40, 53);
-	//g->DrawLine(p, 30, 62, 40, 62);
-	//g->DrawLine(p, 30, 71, 40, 71);
+		//draw shadow of tooltip
+		Drawing::SolidBrush ^ br = gcnew Drawing::SolidBrush(Color::FromArgb(128, 0, 0, 0));
+		g->FillRectangle(br, tooltip.X + 2, tooltip.Y + 2, (int)sSize.Width + 6, (int)sSize.Height + 6);
 
-	//b->Color = blockColors[1];
-	////draw block type
-	//Drawing::Font ^ f = gcnew Drawing::Font("Courier New",8.0);
-	//StringFormat ^ sf = gcnew StringFormat();
-	//sf->Alignment = System::Drawing::StringAlignment::Center;
+		//draw tooltip
+		g->FillRectangle(ColorStyle::brushBack, tooltip.X, tooltip.Y, (int)sSize.Width + 6, (int)sSize.Height + 6);
+		g->DrawRectangle(ColorStyle::penNormal, tooltip.X, tooltip.Y, (int)sSize.Width + 6, (int)sSize.Height + 6);
 
-	//g->DrawString("&", f, b, RectangleF(40, 40, 25, 20), sf);
+		//draw text on tooltip
+		g->DrawString(PS::TooltipMessage, ColorStyle::fontFamily, ColorStyle::brushNormal, tooltip.X + 3, tooltip.Y + 3);
+	}
 
+	//Application::DoEvents();
 }
 

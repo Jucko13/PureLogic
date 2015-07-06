@@ -4,16 +4,13 @@
 
 using namespace System::Drawing;
 
-AND::AND() {
+AND::AND(): Block("AND Gate") {
 	pos.X = 50;
 	pos.Y = 50;
-	simulating = false;
-	active = false;
 
 	pinAdd();
 	output = new Pin(this,0,6,1);
 	output->setNegate(true);
-	simulating = true;
 }
 
 AND::~AND() {
@@ -58,24 +55,25 @@ void AND::pinRemove() {
 		if (p->isConnected()) return;
 		inputs.pop_back();
 		delete p;
-		//
 	}
 }
 
 
 bool AND::execute() {
 	for (Pin *i : inputs) {
-		if (i->getState() == false) {
-			if (active != false){
-				active = false;
-				output->setState(false);
+		if (i->isConnected()) {
+			if (i->getState() == false) {
+				if (active != false){
+					active = false;
+					output->setState(false);
+				}
+				return false;
 			}
-			return false;
 		}
 	}
 	if (active != true) {
-		output->setState(true);
 		active = true;
+		output->setState(true);
 	}
 	return true;
 }
@@ -98,7 +96,7 @@ void AND::draw(Graphics ^g) {
 	g->FillRectangle(ColorStyle::brushBack, pos.X, pos.Y, pos.Width, pos.Height); //35
 
 	//draw border of block
-	if (simulating) {
+	if (PS::simulating) {
 		if (active) {
 			p = ColorStyle::penActive;
 			b = ColorStyle::brushActive;

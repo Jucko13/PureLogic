@@ -17,12 +17,15 @@ namespace PureLogic {
 	public:
 		frmMain(void){ InitializeComponent(); }
 		void frmMain_Load(Object^  sender, EventArgs^  e);
+		void frmMain_Unload(Object^  sender, System::ComponentModel::CancelEventArgs^  e);
 		void frmMain_Paint(Object^  sender, PaintEventArgs^  e);
 		void frmMain_MouseDown(Object^  sender, MouseEventArgs^  e);
 		void frmMain_MouseMove(Object^  sender, MouseEventArgs^  e);
 		void frmMain_MouseUp(Object^  sender, MouseEventArgs^  e);
 		void cmdAdd_Click(Object^  sender, EventArgs^  e);
 		void cmdRemove_Click(Object^  sender, EventArgs^  e);
+		void timerRefresh_Tick(Object^ state, System::Timers::ElapsedEventArgs^ e);
+		void Redraw();
 
 	protected:
 		~frmMain()
@@ -55,7 +58,7 @@ namespace PureLogic {
 			this->cmdAdd->Name = L"cmdAdd";
 			this->cmdAdd->Size = System::Drawing::Size(153, 24);
 			this->cmdAdd->TabIndex = 0;
-			this->cmdAdd->Text = L"Add Input";
+			this->cmdAdd->Text = L"Set SimulationMode";
 			this->cmdAdd->UseVisualStyleBackColor = true;
 			this->cmdAdd->Click += gcnew System::EventHandler(this, &frmMain::cmdAdd_Click);
 			// 
@@ -80,6 +83,7 @@ namespace PureLogic {
 			this->Name = L"frmMain";
 			this->Text = L"frmMain";
 			this->Load += gcnew System::EventHandler(this, &frmMain::frmMain_Load);
+			this->Closing += gcnew System::ComponentModel::CancelEventHandler(this, &frmMain::frmMain_Unload);
 			this->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &frmMain::frmMain_Paint);
 			this->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::frmMain_MouseDown);
 			this->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::frmMain_MouseMove);

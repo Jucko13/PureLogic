@@ -88,6 +88,7 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="Pin.cpp" />
+    <ClCompile Include="PS.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AND.h" />
@@ -99,6 +100,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="Pin.h" />
+    <ClInclude Include="PS.h" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="frmMain.resx">

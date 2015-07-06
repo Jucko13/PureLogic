@@ -27,11 +27,15 @@ public class Pin {
 		Point getPos();
 		Block* getBlock();
 
+		void setBorder(bool);
+
 	private:
 		//Block ^connection;
 		Point offsetPos;
 		Rectangle pos;
 
+
+		bool border;
 		bool positive;
 		Block * connectedBlock;
 		bool output;

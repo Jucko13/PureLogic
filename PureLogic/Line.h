@@ -18,10 +18,13 @@ class Line {
 		void draw(Graphics ^g);
 		void setState(bool);
 		bool getState();
+		bool isPointOnLine(Point p);
+		void setMouseOver(bool);
 
 	private:
 		Pin * Input;
 		Pin * Output;
 		bool positive;
+		bool mouseOver;
 };
 

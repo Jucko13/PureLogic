@@ -5,6 +5,7 @@
 #include "line.h"
 #include "Pin.h"
 #include "ColorStyle.h"
+#include "PS.h"
 
 
 class Pin;
@@ -15,7 +16,7 @@ using std::vector;
 
 class Block abstract {
 	public:
-		Block();
+		Block(std::string n);
 		virtual ~Block();
 
 		virtual bool execute() = 0;
@@ -24,29 +25,32 @@ class Block abstract {
 		virtual void mouseDown(Point p) = 0;
 		virtual void mouseUp(Point p) = 0;
 		virtual void mouseMove(Point p) = 0;
+		
+		bool isSelected();
 
-		//void setColors(unsigned long  a, unsigned long  i, unsigned long  n, unsigned long  b);
+
 		Rectangle getPos();
 		void setPos(int,int); //x,y
 
 		virtual void pinAdd();
 		virtual void pinRemove();
-		bool pointInside(Point p);
 		Pin * getSelectedPin(Point p);
-
+		std::vector<Pin*> inputs;
+		Pin * output;
 		void attachLine(Line *p, int pinNum, int isOutput);
 		void detachLine(Line *p);
 
-		
-
-		bool simulating;
 		bool active;
-
-		std::vector<Pin*> inputs;
-		Pin * output;
+		bool pointInside(Point p);
+		std::string getName();
+		
 
 	protected:
 		Rectangle pos;
-		
+
+	private:
+		std::string name;
+		bool selected;
+
 };
 

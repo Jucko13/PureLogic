@@ -5,10 +5,8 @@ using namespace System::Windows::Forms;
 
 using namespace System::Drawing;
 
-Input::Input() {
+Input::Input() : Block("INPUT") {
 	output = new Pin(this,0,6,1);
-	simulating = true;
-	active = false;
 }
 
 
@@ -18,15 +16,18 @@ Input::~Input() {
 
 
 void Input::mouseDown(Point p) {
-	//MessageBox::Show("input!");
-	active = true;
-	execute();
+	if (PS::simulating) {
+		active = true;
+		execute();
+	}
 }
 
 void Input::mouseUp(Point p) {
-	//MessageBox::Show("input!");
-	active = false;
-	execute();
+	if (PS::simulating){
+		//MessageBox::Show("input!");
+		active = false;
+		execute();
+	}
 }
 
 void Input::mouseMove(Point p) {
@@ -63,7 +64,7 @@ void Input::draw(Graphics ^g) {
 	//draw background of block
 	g->FillRectangle(ColorStyle::brushBack, pos.X, pos.Y, pos.Width, pos.Height); //35
 
-	if (simulating) {
+	if (PS::simulating) {
 		if (active) {
 			p = ColorStyle::penActive;
 			b = ColorStyle::brushActive;
