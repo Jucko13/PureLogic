@@ -20,10 +20,15 @@ value class PS {
 		static bool TooltipVisible;
 		static Point TooltipPos;
 
-		static Pin * mouseOverPin;
-		static Line * mouseOverLine;
+		static Pin * mouseOverPin = 0;
+		static Line * mouseOverLine = 0;
 
 		static System::Timers::Timer^ timerRefresh;
-		static bool refreshNeeded;
+		static bool refreshNeeded = false;
+
+		static bool keyShift = false;
+		static bool keyCtrl = false;
+		static bool keyAlt = false;
+
 };
 

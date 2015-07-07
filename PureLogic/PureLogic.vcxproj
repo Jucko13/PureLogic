@@ -21,7 +21,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
-    <CLRSupport>true</CLRSupport>
+    <CLRSupport>Pure</CLRSupport>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -94,6 +94,7 @@
     <ClInclude Include="AND.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="ColorStyle.h" />
+    <ClInclude Include="FlickerLessPanel.h" />
     <ClInclude Include="frmMain.h">
       <FileType>CppForm</FileType>
     </ClInclude>

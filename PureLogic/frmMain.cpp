@@ -7,20 +7,11 @@
 #include "ColorStyle.h"
 #include "PS.h"
 
-//using namespace System;
+
 using namespace System::Windows::Forms;
 using namespace PureLogic;
 
 using namespace System::Drawing;
-
-//AND mygate;
-//AND mygate2;
-//Input inpu;
-//Input inpu2;
-
-//Line connectionLine;
-//Line connectionLine2;
-//Line connectionLine3;
 
 Point dragStart;
 Point dragCurrent;
@@ -35,13 +26,34 @@ bool isRefreshing = false;
 
 [STAThread]
 int main(array<String^> ^args) {
-	Application::EnableVisualStyles();
+	//Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
 
 	PureLogic::frmMain form;
 	Application::Run(%form);
 
 	return 0;
+}
+
+Rectangle getAbsoluteRectFromPoints(Point p1, Point p2) {
+	Rectangle r;
+	if (p1.X < p2.X) {
+		r.X = p1.X;
+		r.Width = p2.X - p1.X;
+	} else {
+		r.X = p2.X;
+		r.Width = p1.X - p2.X;
+	}
+
+	if (p1.Y < p2.Y) {
+		r.Y = p1.Y;
+		r.Height = p2.Y - p1.Y;
+	} else {
+		r.Y = p2.Y;
+		r.Height = p1.Y - p2.Y;
+	}
+
+	return r;
 }
 
 Pin * getPinAtPoint(Point p) {
@@ -70,6 +82,7 @@ unsigned long createRGB(int r, int g, int b) {
 void frmMain::timerRefresh_Tick(Object^ state, System::Timers::ElapsedEventArgs^ e) {
 	try {
 		this->Invoke(gcnew MethodInvoker(this, &frmMain::Redraw));
+		PS::timerRefresh->Start();
 	} catch (System::ObjectDisposedException ^e) {
 		
 	}
@@ -77,10 +90,30 @@ void frmMain::timerRefresh_Tick(Object^ state, System::Timers::ElapsedEventArgs^
 
 void frmMain::Redraw() {
 	if (PS::refreshNeeded) {
-		frmMain::Refresh();
+		this->pBackground->Invalidate();
 		PS::refreshNeeded = false;
 	}
 }
+
+
+void frmMain::pBackground_KeyDown(Object^  sender, KeyEventArgs^ e){
+	if (e->Shift) lblStatusShift->Text = "Shift";
+	if (e->Alt) lblStatusAlt->Text = "Alt";
+	if (e->Control) lblStatusCtrl->Text = "Ctrl";
+	//PS::TooltipMessage = e->Shift + " " + e->Alt + " " + e->Control;
+	//PS::TooltipVisible = true;
+}
+
+void frmMain::pBackground_KeyUp(Object^  sender, KeyEventArgs^ e){
+	if (!e->Shift) lblStatusShift->Text = "";
+	if (!e->Alt) lblStatusAlt->Text = "";
+	if (!e->Control) lblStatusCtrl->Text = "";
+}
+
+void frmMain::pBackground_KeyPress(Object^  sender, KeyPressEventArgs^ e){
+
+}
+
 
 void frmMain::frmMain_Unload(Object^  sender, System::ComponentModel::CancelEventArgs^  e) {
 	PS::timerRefresh->Stop();
@@ -99,18 +132,21 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	ColorStyle::colorNormal = Color(Color::FromArgb(0, 0, 0));
 	ColorStyle::colorBack = Color(Color::FromArgb(255, 222, 140));
 	ColorStyle::colorMouseOver = Color(Color::FromArgb(0, 255, 0));
+	ColorStyle::colorSelected = Color(Color::FromArgb(120, 255, 0, 0));
 
 	ColorStyle::brushActive = gcnew SolidBrush(ColorStyle::colorActive);
 	ColorStyle::brushInactive = gcnew SolidBrush(ColorStyle::colorInactive);
 	ColorStyle::brushNormal = gcnew SolidBrush(ColorStyle::colorNormal);
 	ColorStyle::brushBack = gcnew SolidBrush(ColorStyle::colorBack);
 	ColorStyle::brushMouseOver = gcnew SolidBrush(ColorStyle::colorMouseOver);
+	ColorStyle::brushSelected = gcnew SolidBrush(ColorStyle::colorSelected);
 
 	ColorStyle::penActive = gcnew Pen(ColorStyle::colorActive);
 	ColorStyle::penInactive = gcnew Pen(ColorStyle::colorInactive);
 	ColorStyle::penNormal = gcnew Pen(ColorStyle::colorNormal);
 	ColorStyle::penBack = gcnew Pen(ColorStyle::colorBack);
 	ColorStyle::penMouseOver = gcnew Pen(ColorStyle::colorMouseOver);
+	ColorStyle::penSelected = gcnew Pen(ColorStyle::colorSelected);
 
 	ColorStyle::fontFamily = gcnew System::Drawing::Font("Courier New",8.0);
 	ColorStyle::fontFormatFar = gcnew StringFormat();
@@ -126,9 +162,9 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	PS::TooltipMessage = "";
 	PS::TooltipVisible = false;
 	
-	PS::timerRefresh = gcnew System::Timers::Timer(30);
+	PS::timerRefresh = gcnew System::Timers::Timer(10);
 	PS::timerRefresh->BeginInit();
-	PS::timerRefresh->AutoReset = true;
+	PS::timerRefresh->AutoReset = false;
 	PS::timerRefresh->Elapsed += gcnew System::Timers::ElapsedEventHandler(this, &frmMain::timerRefresh_Tick);
 	PS::timerRefresh->EndInit();
 
@@ -150,6 +186,8 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 			blocks[t]->setPos(50 + j * 250, 20 + (i / 4) * 70);
 			blocks[t]->attachLine(connectionLines[t], -1, 1);
 			blocks[t]->attachLine(connectionLines[t + 3], -1, 1);
+			//blocks[t]->selected = true;
+
 
 			blocks.push_back(new Input); //inpu2
 			blocks[t + 1]->setPos(50 + j * 250, 56 + (i / 4) * 70);
@@ -184,13 +222,20 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 
 }
 
-void frmMain::frmMain_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
+void frmMain::pBackground_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
+	pBackground->Focus();
+	
 	if (e->Button == System::Windows::Forms::MouseButtons::Left) {
 
 		for (Block * b : blocks) {
 			if (b->pointInside(e->Location)) b->mouseDown(e->Location);
 		}
 
+		dragStartPin = 0;
+		dragStart = e->Location;
+		dragCurrent = e->Location;
+		isDragging = true;
+		pBackground_MouseMove(sender, e);
 
 	} else if (e->Button == System::Windows::Forms::MouseButtons::Right) {
 		
@@ -199,17 +244,17 @@ void frmMain::frmMain_MouseDown(System::Object^ sender, System::Windows::Forms::
 			dragStart = e->Location;
 			dragCurrent = e->Location;
 			isDragging = true;
-			frmMain_MouseMove(sender, e);
+			pBackground_MouseMove(sender, e);
 		}
 	}
 
-	frmMain::Refresh();
+	PS::refreshNeeded = true;
 }
 
-void frmMain::frmMain_MouseMove(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
+void frmMain::pBackground_MouseMove(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
 	
 	
-
+	
 	if (!isDragging) {
 		if (PS::mouseOverLine != 0) {
 			PS::mouseOverLine->setMouseOver(false);
@@ -223,13 +268,14 @@ void frmMain::frmMain_MouseMove(System::Object^ sender, System::Windows::Forms::
 
 	if (PS::mouseOverPin != 0) {
 		PS::mouseOverPin->setBorder(false);
+		PS::mouseOverPin = 0;
 		PS::TooltipVisible = false;
 	}
 
 	PS::mouseOverPin = getPinAtPoint(e->Location);
 	if (PS::mouseOverPin != 0) {
 		
-		if (isDragging) {
+		if (isDragging && dragStartPin != 0) {
 			if (PS::mouseOverPin == dragStartPin) {
 				PS::TooltipVisible = true;
 				PS::TooltipMessage = "Release to Negate PIN";
@@ -246,7 +292,7 @@ void frmMain::frmMain_MouseMove(System::Object^ sender, System::Windows::Forms::
 		}
 		PS::mouseOverPin->setBorder(true);
 	}
-
+	
 	
 
 
@@ -260,7 +306,7 @@ void frmMain::frmMain_MouseMove(System::Object^ sender, System::Windows::Forms::
 }
 
 
-void frmMain::frmMain_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
+void frmMain::pBackground_MouseUp(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
 	Pin * pin1;
 	Pin * pin2;
 	Pin * pintemp;
@@ -268,7 +314,36 @@ void frmMain::frmMain_MouseUp(System::Object^ sender, System::Windows::Forms::Mo
 	if (e->Button == System::Windows::Forms::MouseButtons::Left) {
 		for (Block * b : blocks) {
 			b->mouseUp(e->Location);
+
+			if (isDragging) {
+				b->selected = false;
+				if (getAbsoluteRectFromPoints(dragStart, dragCurrent).Contains(b->getPos())) {
+					b->selected = true;
+				}
+
+			}else{
+
+			}
 		}
+
+		bool checkSelect = (isDragging && dragStart != dragCurrent);
+
+		for (Line * l : connectionLines) {
+			l->selected = false;
+			if (checkSelect) {
+				if (getAbsoluteRectFromPoints(dragStart, dragCurrent).Contains(l->getPos())) {
+					l->selected = true;
+				}
+			}
+		}
+
+		Line * li = getLineAtPoint(dragStart);
+
+		if(li != 0){
+			li->selected = true;
+		}
+
+		isDragging = false;
 
 	} else if (e->Button == System::Windows::Forms::MouseButtons::Right) {
 		dragCurrent = e->Location;
@@ -328,18 +403,22 @@ void frmMain::cmdRemove_Click(Object^  sender, EventArgs^  e) {
 }
 
 
-
-void frmMain::frmMain_Paint(Object^  sender, PaintEventArgs^  e) {
+void frmMain::pBackground_Paint(Object^  sender, PaintEventArgs^  e) {
 
 	System::Drawing::Graphics ^g = e->Graphics;
 	Drawing::SolidBrush ^programBackground = gcnew Drawing::SolidBrush(Color::FromArgb(180, 180, 180));
 	Drawing::Pen ^blockBorder = gcnew Pen(Drawing::Color::Black);
 	
-	g->SmoothingMode = System::Drawing::Drawing2D::SmoothingMode::HighSpeed;
+	Drawing::SolidBrush ^selectionBack = gcnew Drawing::SolidBrush(Color::FromArgb(80, 0, 162, 232));
+	Drawing::Pen ^selectionBorder = gcnew Pen(Color::FromArgb(0, 162, 232));
+
+	//e->Graphics->
+
+	//g->SmoothingMode = System::Drawing::Drawing2D::SmoothingMode::AntiAlias;
 
 
 	//paint background
-	g->FillRectangle(programBackground, frmMain::ClientRectangle);
+	//g->FillRectangle(programBackground, frmMain::ClientRectangle);
 
 	for (Block * b : blocks) {
 		b->draw(g);
@@ -350,7 +429,14 @@ void frmMain::frmMain_Paint(Object^  sender, PaintEventArgs^  e) {
 	}
 
 	if (isDragging) {
-		g->DrawLine(blockBorder, dragStart, dragCurrent);
+		if (dragStartPin != 0){
+			g->DrawLine(blockBorder, dragStart, dragCurrent);
+		}else{
+			Rectangle selection = getAbsoluteRectFromPoints(dragStart, dragCurrent);
+
+			g->FillRectangle(selectionBack, selection);
+			g->DrawRectangle(selectionBorder, selection);
+		}
 	}
 	
 	if (PS::TooltipVisible) {

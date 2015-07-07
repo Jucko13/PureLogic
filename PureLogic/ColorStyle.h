@@ -12,19 +12,21 @@ public:
 	static Color colorNormal;
 	static Color colorBack;
 	static Color colorMouseOver;
+	static Color colorSelected;
 
 	static Pen ^ penActive;
 	static Pen ^ penInactive;
 	static Pen ^ penNormal;
 	static Pen ^ penBack;
 	static Pen ^ penMouseOver;
-
+	static Pen ^ penSelected;
 
 	static Brush ^ brushActive;
 	static Brush ^ brushInactive;
 	static Brush ^ brushNormal;
 	static Brush ^ brushBack;
 	static Brush ^ brushMouseOver;
+	static Brush ^ brushSelected;
 
 	static Font ^ fontFamily;
 	static StringFormat ^ fontFormatCenter;

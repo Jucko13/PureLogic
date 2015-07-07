@@ -23,6 +23,25 @@ std::string Block::getName() {
 	return name;
 }
 
+void Block::draw(Graphics ^g){
+	if(!selected) return;
+
+	g->FillRectangle(ColorStyle::brushSelected, pos.X - 3, pos.Y-3,6,6);
+	g->DrawRectangle(ColorStyle::penNormal, pos.X - 3, pos.Y - 3, 6, 6);
+
+	g->FillRectangle(ColorStyle::brushSelected, pos.X + pos.Width - 3, pos.Y - 3, 6, 6);
+	g->DrawRectangle(ColorStyle::penNormal, pos.X + pos.Width - 3, pos.Y - 3, 6, 6);
+
+	g->FillRectangle(ColorStyle::brushSelected, pos.X - 3, pos.Y + pos.Height - 3, 6, 6);
+	g->DrawRectangle(ColorStyle::penNormal, pos.X - 3, pos.Y + pos.Height - 3, 6, 6);
+
+	g->FillRectangle(ColorStyle::brushSelected, pos.X + pos.Width - 3, pos.Y + pos.Height - 3, 6, 6);
+	g->DrawRectangle(ColorStyle::penNormal, pos.X + pos.Width - 3, pos.Y + pos.Height - 3, 6, 6);
+
+
+
+}
+
 Pin * Block::getSelectedPin(Point p) {
 	Point pinpos;
 

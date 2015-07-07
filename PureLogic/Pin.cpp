@@ -54,7 +54,6 @@ void Pin::setNegate(bool newState) {
 		} else {
 			connectedBlock->execute();
 		}
-		
 	}
 }
 
@@ -80,8 +79,10 @@ void Pin::attachLine(Line *p) {
 	lines.push_back(p);
 	if (output) {
 		p->setOutput(this);
+		p->setState(getState());
 	} else {
 		p->setInput(this);
+		setState(p->getState());
 	}
 }
 

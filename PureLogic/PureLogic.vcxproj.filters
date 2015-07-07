@@ -65,6 +65,9 @@
     <ClInclude Include="PS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FlickerLessPanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="frmMain.resx">

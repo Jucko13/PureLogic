@@ -21,10 +21,14 @@ class Line {
 		bool isPointOnLine(Point p);
 		void setMouseOver(bool);
 
+		Rectangle getPos();
+		bool selected = false;
+
 	private:
-		Pin * Input;
-		Pin * Output;
+		Pin * Input = 0;
+		Pin * Output = 0;
 		bool positive;
 		bool mouseOver;
+		
 };
 

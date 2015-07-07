@@ -28,13 +28,17 @@ void AND::pinAdd() {
 }
 
 void AND::mouseDown(Point p) {
-	Point ^relative = gcnew Point(p.X - pos.X, p.Y - pos.Y);
+	if (PS::simulating) {
+		selected = true;
+	}else{
+		Point ^relative = gcnew Point(p.X - pos.X, p.Y - pos.Y);
 
-	if (relative->Y > pos.Height - 10 && relative->Y < pos.Height) {
-		if (relative->X > 2 && relative->X < 8) {
-			pinAdd();
-		} else if (relative->X > 8 && relative->X < 14) {
-			pinRemove();
+		if (relative->Y > pos.Height - 10 && relative->Y < pos.Height) {
+			if (relative->X > 2 && relative->X < 8) {
+				pinAdd();
+			} else if (relative->X > 8 && relative->X < 14) {
+				pinRemove();
+			}
 		}
 	}
 }
@@ -111,21 +115,22 @@ void AND::draw(Graphics ^g) {
 	g->DrawRectangle(p, pos.X, pos.Y, pos.Width, pos.Height); //35
 
 
-	
-	int inputsize = inputs.size() - 1;
+	if (!PS::simulating){
+		int inputsize = inputs.size() - 1;
 
-	if (inputsize >= 0 && inputsize < 9) {
-		if (!inputs[inputsize]->isConnected()) {
-			g->DrawString("+-", ColorStyle::fontFamily, b, RectangleF(pos.X, pos.Y, pos.Width, pos.Height), ColorStyle::fontFormatFar);
+		if (inputsize >= 0 && inputsize < 9) {
+			if (!inputs[inputsize]->isConnected()) {
+				g->DrawString("+-", ColorStyle::fontFamily, b, RectangleF(pos.X, pos.Y, pos.Width, pos.Height), ColorStyle::fontFormatFar);
+			} else {
+				g->DrawString("+", ColorStyle::fontFamily, b, RectangleF(pos.X, pos.Y, pos.Width, pos.Height), ColorStyle::fontFormatFar);
+			}
 		} else {
-			g->DrawString("+", ColorStyle::fontFamily, b, RectangleF(pos.X, pos.Y, pos.Width, pos.Height), ColorStyle::fontFormatFar);
+			g->DrawString(" -", ColorStyle::fontFamily, b, RectangleF(pos.X, pos.Y, pos.Width, pos.Height), ColorStyle::fontFormatFar);
 		}
-	} else {
-		g->DrawString(" -", ColorStyle::fontFamily, b, RectangleF(pos.X, pos.Y, pos.Width, pos.Height), ColorStyle::fontFormatFar);
 	}
 
 	g->DrawString("&", ColorStyle::fontFamily, b, RectangleF(pos.X, pos.Y, pos.Width, 12), ColorStyle::fontFormatCenter);
-	
 
 
+	Block::draw(g);
 }

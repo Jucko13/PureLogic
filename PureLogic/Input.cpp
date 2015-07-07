@@ -82,4 +82,5 @@ void Input::draw(Graphics ^g) {
 
 	g->DrawString("I", ColorStyle::fontFamily, b, RectangleF(pos.X, pos.Y, pos.Width, 12), ColorStyle::fontFormatCenter);
 
+	Block::draw(g);
 }

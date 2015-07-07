@@ -20,14 +20,14 @@ class Block abstract {
 		virtual ~Block();
 
 		virtual bool execute() = 0;
-		virtual void draw(Graphics ^g) = 0;
+		virtual void draw(Graphics ^g);
 
 		virtual void mouseDown(Point p) = 0;
 		virtual void mouseUp(Point p) = 0;
 		virtual void mouseMove(Point p) = 0;
 		
-		bool isSelected();
-
+		//bool isSelected();
+		//void setSelected();
 
 		Rectangle getPos();
 		void setPos(int,int); //x,y
@@ -43,14 +43,15 @@ class Block abstract {
 		bool active;
 		bool pointInside(Point p);
 		std::string getName();
-		
+		bool selected;
 
 	protected:
 		Rectangle pos;
+		
 
 	private:
 		std::string name;
-		bool selected;
+		
 
 };
 
