@@ -6,6 +6,8 @@
 #include "Input.h"
 #include "ColorStyle.h"
 #include "PS.h"
+#include <algorithm>
+
 
 using namespace System::Windows::Forms;
 using namespace PureLogic;
@@ -37,7 +39,7 @@ int main(array<String^> ^args) {
 bool findRecursiveConnection(Pin * pStart, Pin * pEnd){
 	Block * bTmp;
 	Pin * pTmp;
-	Line * lTmp;
+//	Line * lTmp;
 
 	Pin * loopStart;
 
@@ -109,15 +111,6 @@ unsigned long createRGB(int r, int g, int b) {
 }
 
 void frmMain::timerRefresh_Tick(Object^ state, System::Timers::ElapsedEventArgs^ e) {
-	try {
-		this->Invoke(gcnew MethodInvoker(this, &frmMain::Redraw));
-		PS::timerRefresh->Start();
-	} catch (System::ObjectDisposedException ^e) {
-		
-	}
-}
-
-void frmMain::Redraw() {
 	if (PS::refreshNeeded) {
 		this->pBackground->Invalidate();
 		PS::refreshNeeded = false;
@@ -142,10 +135,65 @@ void frmMain::pBackground_KeyUp(Object^  sender, KeyEventArgs^ e){
 	if (!e->Shift) lblStatusShift->Text = "";
 	if (!e->Alt) lblStatusAlt->Text = "";
 	if (!e->Control) lblStatusCtrl->Text = "";
+
+	if (e->KeyCode == Keys::Delete) {
+		//delete all lines and blocks
+
+		int blockcounter = 0;
+		for (int i = 0; i < blocks.size(); i++) {
+			if(blocks[i]->selected){
+				
+				for(Pin * p : blocks[i]->inputs){
+					if(p->isConnected()){
+						while (p->lines.size() > 0){
+							Line *l = p->lines[0];
+							for (int j = 0; j < connectionLines.size(); j++) {
+								if (l == connectionLines[j]){
+									delete connectionLines[j];
+									connectionLines[j] = NULL;
+								}
+							}
+						}
+					}
+				}
+
+				if (blocks[i]->output->isConnected()) {
+					while (blocks[i]->output->lines.size() > 0) {
+						Line *l = blocks[i]->output->lines[0];
+						for (int j = 0; j < connectionLines.size(); j++) {
+							if (connectionLines[j] == l) {
+								delete connectionLines[j];
+								connectionLines[j] = NULL;
+							}
+						}
+					}
+				}
+
+				delete blocks[i];
+				blocks[i] = NULL;
+			}
+		}
+
+		for (int j = 0; j < connectionLines.size(); j++) {
+			if (connectionLines[j] != 0 && connectionLines[j]->selected) {
+				delete connectionLines[j];
+				connectionLines[j] = NULL;
+			}
+		}
+
+
+		blocks.erase(std::remove(blocks.begin(), blocks.end(), static_cast<Block*>(NULL)), blocks.end());
+		connectionLines.erase(std::remove(connectionLines.begin(), connectionLines.end(), static_cast<Line*>(NULL)), connectionLines.end());
+
+
+		PS::refreshNeeded = true;
+	}
+
+
 }
 
 void frmMain::pBackground_KeyPress(Object^  sender, KeyPressEventArgs^ e){
-
+	
 }
 
 
@@ -210,7 +258,7 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	
 	PS::timerRefresh = gcnew System::Timers::Timer(1);
 	PS::timerRefresh->BeginInit();
-	PS::timerRefresh->AutoReset = false;
+	PS::timerRefresh->AutoReset = true;
 	PS::timerRefresh->Elapsed += gcnew System::Timers::ElapsedEventHandler(this, &frmMain::timerRefresh_Tick);
 	PS::timerRefresh->EndInit();
 
@@ -225,37 +273,37 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	//for (j = 0; j < 4; j++) {
 		for (i = 0; i < 5*4; i+=4) {
 			
-			connectionLines.push_back(new Line);
-			connectionLines.push_back(new Line);
-			connectionLines.push_back(new Line);
-			connectionLines.push_back(new Line);
+			//connectionLines.push_back(new Line);
+			//connectionLines.push_back(new Line);
+			//connectionLines.push_back(new Line);
+			//connectionLines.push_back(new Line);
 
 			blocks.push_back(new Input); //inpu
 			blocks[t]->setPos(50 + j * 250, 50 + (i / 4) * 70);
-			blocks[t]->attachLine(connectionLines[t], -1, 1);
-			blocks[t]->attachLine(connectionLines[t + 3], -1, 1);
+			//blocks[t]->attachLine(connectionLines[t], -1, 1);
+			//blocks[t]->attachLine(connectionLines[t + 3], -1, 1);
 			
 
 			blocks.push_back(new Input); //inpu2
 			blocks[t + 1]->setPos(50 + j * 250, 86 + (i / 4) * 70);
-			blocks[t + 1]->attachLine(connectionLines[t + 1], -1, 1);
+			//blocks[t + 1]->attachLine(connectionLines[t + 1], -1, 1);
 
 			blocks.push_back(new AND); //mygate
 			blocks[t + 2]->setPos(150 + j * 250, 50 + (i / 4) * 70);
-			blocks[t + 2]->attachLine(connectionLines[t], -1, 0); //input
+			//blocks[t + 2]->attachLine(connectionLines[t], -1, 0); //input
 			blocks[t + 2]->pinAdd();
 			blocks[t + 2]->pinAdd();
 			blocks[t + 2]->pinAdd();
 			blocks[t + 2]->pinAdd();
 			blocks[t + 2]->inputs[4]->setNegate(true);
 			blocks[t + 2]->inputs[0]->setNegate(true);
-			blocks[t + 2]->attachLine(connectionLines[t + 1], 4, 0); //input
-			blocks[t + 2]->attachLine(connectionLines[t + 2], -1, 1); //output
-			blocks[t + 2]->attachLine(connectionLines[t + 3], -1, 0);
+			//blocks[t + 2]->attachLine(connectionLines[t + 1], 4, 0); //input
+			//blocks[t + 2]->attachLine(connectionLines[t + 2], -1, 1); //output
+			//blocks[t + 2]->attachLine(connectionLines[t + 3], -1, 0);
 
 			blocks.push_back(new AND); //mygate2
 			blocks[t + 3]->setPos(220 + j * 250, 50 + (i / 4) * 70);
-			blocks[t + 3]->attachLine(connectionLines[t + 2], -1, 0);
+			//blocks[t + 3]->attachLine(connectionLines[t + 2], -1, 0);
 			t += 4;
 		}
 		

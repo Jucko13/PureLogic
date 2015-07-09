@@ -74,6 +74,19 @@ bool Pin::getState() {
 	return positive ^ negate;
 }
 
+
+void Pin::deatachLine(Line *p){
+	for (int i = 0; i < lines.size(); i++) {
+		if (lines[i] == p) {
+			lines[i] = NULL;
+			break;
+		}
+	}
+
+	lines.erase(std::remove(lines.begin(), lines.end(), static_cast<Line*>(NULL)), lines.end());
+}
+
+
 void Pin::attachLine(Line *p) {
 	if (p == 0) return;
 	lines.push_back(p);

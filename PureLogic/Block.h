@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include <algorithm>
 #include <vector>
 #include "line.h"
 #include "Pin.h"

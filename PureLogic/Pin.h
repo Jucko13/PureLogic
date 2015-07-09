@@ -24,6 +24,7 @@ public class Pin {
 		void setState(bool);
 		void setNegate(bool);
 		void attachLine(Line *p);
+		void deatachLine(Line *p);
 		Point getPos();
 		Block* getBlock();
 

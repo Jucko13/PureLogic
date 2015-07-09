@@ -33,7 +33,6 @@ namespace PureLogic {
 		void cmdAdd_Click(Object^  sender, EventArgs^  e);
 		void cmdRemove_Click(Object^  sender, EventArgs^  e);
 		void timerRefresh_Tick(Object^ state, System::Timers::ElapsedEventArgs^ e);
-		void Redraw();
 
 	protected:
 		~frmMain()

@@ -13,7 +13,15 @@ Line::Line(Pin*i, Pin*o) : Input(i), Output(o) {
 
 
 Line::~Line() {
+	if(Input != 0){
+		Input->deatachLine(this);
+		Input = 0;
+	}
 
+	if (Output != 0) {
+		Output->deatachLine(this);
+		Output = 0;
+	}
 }
 
 int min(int n1, int n2){
