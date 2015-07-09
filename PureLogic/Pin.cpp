@@ -76,7 +76,7 @@ bool Pin::getState() {
 
 
 void Pin::deatachLine(Line *p){
-	for (int i = 0; i < lines.size(); i++) {
+	for (unsigned int i = 0; i < lines.size(); i++) {
 		if (lines[i] == p) {
 			lines[i] = NULL;
 			break;

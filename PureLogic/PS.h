@@ -11,8 +11,17 @@ using namespace System::Drawing;
 class Pin;
 class Line;
 
+
+
 value class PS {
 	public:
+		static enum class dragType: int {
+			none = 0,
+			selecting = 1,
+			moving = 2,
+			line = 3
+		};
+
 		static bool simulating;
 
 		static System::String ^ TooltipMessage;
@@ -27,5 +36,9 @@ value class PS {
 
 		static System::Windows::Forms::KeyEventArgs^ keys;
 
+		static Point dragStart;
+		static Point dragCurrent;
+		static Pin * dragStartPin;
+		static dragType dragMode;
 };
 

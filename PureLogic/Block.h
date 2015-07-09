@@ -40,6 +40,9 @@ class Block abstract {
 		void attachLine(Line *p, int pinNum, int isOutput);
 		void detachLine(Line *p);
 
+		void setPosOffset(Point p);
+		void setPosCalculateOffset();
+
 		bool active;
 		bool pointInside(Point p);
 		std::string getName();
@@ -47,9 +50,10 @@ class Block abstract {
 
 	protected:
 		Rectangle pos;
-		
+		Point posOffset;
 
 	private:
+		
 		std::string name;
 		
 

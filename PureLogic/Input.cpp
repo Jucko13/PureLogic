@@ -6,7 +6,7 @@ using namespace System::Windows::Forms;
 using namespace System::Drawing;
 
 Input::Input() : Block("INPUT") {
-	output = new Pin(this,0,6,1);
+	output = new Pin(this,0,10,1);
 }
 
 
@@ -55,14 +55,16 @@ void Input::draw(Graphics ^g) {
 	Brush ^b;
 	Pen ^p;
 
-	pos.Height = (inputs.size() - 1) * 9 + 12;
-	if (pos.Height < 21) pos.Height = 21;
-	pos.Width = 25;
+	pos.Height = (inputs.size() - 1) * 10 + 20;
+	if (pos.Height < 20) pos.Height = 20;
+	pos.Width = 20;
+
+	Rectangle rect = getPos();
 
 	output->draw(g);
 
 	//draw background of block
-	g->FillRectangle(ColorStyle::brushBack, pos.X, pos.Y, pos.Width, pos.Height); //35
+	g->FillRectangle(ColorStyle::brushBack, rect.X, rect.Y, rect.Width, rect.Height); //35
 
 	if (PS::simulating) {
 		if (active) {
@@ -77,10 +79,10 @@ void Input::draw(Graphics ^g) {
 		b = ColorStyle::brushNormal;
 	}
 
-	g->DrawRectangle(p, pos.X, pos.Y, pos.Width, pos.Height); //35
+	g->DrawRectangle(p, rect.X, rect.Y, rect.Width, rect.Height); //35
 
 
-	g->DrawString("I", ColorStyle::fontFamily, b, RectangleF(pos.X, pos.Y, pos.Width, 12), ColorStyle::fontFormatCenter);
+	g->DrawString("I", ColorStyle::fontFamily, b, Rectangle(rect.X, rect.Y, rect.Width, 12), ColorStyle::fontFormatCenter);
 
 	Block::draw(g);
 }
