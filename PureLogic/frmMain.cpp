@@ -39,8 +39,6 @@ int main(array<String^> ^args) {
 bool findRecursiveConnection(Pin * pStart, Pin * pEnd){
 	Block * bTmp;
 	Pin * pTmp;
-//	Line * lTmp;
-
 	Pin * loopStart;
 
 	loopStart = pStart;
@@ -233,9 +231,9 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 
 	//dpi scaling compensation calculation
 	Graphics ^g = pBackground->CreateGraphics();
-	float scaleDpi = 96.0 / g->DpiX;
-	ColorStyle::fontFamily = gcnew System::Drawing::Font("Courier New", scaleDpi * 8.0);
-	lblStatusAlt->Font = gcnew System::Drawing::Font("Courier New", scaleDpi * 10.0);
+	float scaleDpi = 96.0f / g->DpiX;
+	ColorStyle::fontFamily = gcnew System::Drawing::Font("Courier New", scaleDpi * 8.0f);
+	lblStatusAlt->Font = gcnew System::Drawing::Font("Courier New", scaleDpi * 10.0f);
 	lblStatusCtrl->Font = lblStatusAlt->Font;
 	lblStatusShift->Font = lblStatusAlt->Font;
 	lblStatusAlt->Text = "";
@@ -595,7 +593,7 @@ void frmMain::pBackground_Paint(Object^  sender, PaintEventArgs^  e) {
 		if (tooltip.X < 0) {
 			tooltip.X = 0;
 		} else if (tooltip.X + sSize.Width + 6 > ClientRectangle.Width) {
-			tooltip.X = ClientRectangle.Width - (sSize.Width + 6);
+			tooltip.X = ClientRectangle.Width - ((int)sSize.Width + 6);
 		}
 
 		//draw shadow of tooltip
@@ -607,7 +605,7 @@ void frmMain::pBackground_Paint(Object^  sender, PaintEventArgs^  e) {
 		g->DrawRectangle(ColorStyle::penNormal, tooltip.X, tooltip.Y, (int)sSize.Width + 6, (int)sSize.Height + 6);
 
 		//draw text on tooltip
-		g->DrawString(PS::TooltipMessage, ColorStyle::fontFamily, ColorStyle::brushNormal, tooltip.X + 3, tooltip.Y + 3);
+		g->DrawString(PS::TooltipMessage, ColorStyle::fontFamily, ColorStyle::brushNormal, tooltip.X + 3.0f, tooltip.Y + 3.0f);
 	}
 
 	//Application::DoEvents();
