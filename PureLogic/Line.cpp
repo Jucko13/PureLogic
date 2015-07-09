@@ -105,10 +105,10 @@ Rectangle Line::getPos() {
 	Point pos1 = Input->getPos();
 	Point pos2 = Output->getPos();
 
-	r.X = min(pos1.X,pos2.X);
+	r.X = min(pos1.X,pos2.X+10);
 	r.Y = min(pos1.Y, pos2.Y);
 
-	r.Width = abs(pos1.X - pos2.X);
+	r.Width = abs(pos1.X - (pos2.X + 10));
 	r.Height = abs(pos1.Y - pos2.Y);
 	return r;
 }
@@ -120,6 +120,15 @@ void Line::setInput(Pin *b) {
 void Line::setOutput(Pin *b) {
 	Output = b;
 }
+
+Pin * Line::getInput() {
+	return Input;
+}
+
+Pin * Line::getOutput() {
+	return Output;
+}
+
 
 void Line::setState(bool newState) {
 	positive = newState;

@@ -90,16 +90,15 @@ namespace PureLogic {
 			this->pBackground->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->pBackground->Location = System::Drawing::Point(0, 0);
 			this->pBackground->Name = L"pBackground";
-			this->pBackground->Size = System::Drawing::Size(989, 604);
+			this->pBackground->Size = System::Drawing::Size(660, 485);
 			this->pBackground->TabIndex = 2;
+			this->pBackground->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &frmMain::pBackground_KeyUp);
+			this->pBackground->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &frmMain::pBackground_KeyDown);
+			this->pBackground->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &frmMain::pBackground_KeyPress);
 			this->pBackground->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &frmMain::pBackground_Paint);
 			this->pBackground->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::pBackground_MouseDown);
 			this->pBackground->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::pBackground_MouseMove);
 			this->pBackground->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::pBackground_MouseUp);
-			this->pBackground->KeyDown += gcnew System::Windows::Forms::KeyEventHandler(this, &frmMain::pBackground_KeyDown);
-			this->pBackground->KeyUp += gcnew System::Windows::Forms::KeyEventHandler(this, &frmMain::pBackground_KeyUp);
-			this->pBackground->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &frmMain::pBackground_KeyPress);
-
 			// 
 			// cmdAdd
 			// 
@@ -127,16 +126,16 @@ namespace PureLogic {
 				this->lblStatusSpring, this->lblStatusCtrl,
 this->lblStatusAlt, this->lblStatusShift
 			});
-			this->sStatus->Location = System::Drawing::Point(0, 582);
+			this->sStatus->Location = System::Drawing::Point(0, 463);
 			this->sStatus->Name = L"sStatus";
-			this->sStatus->Size = System::Drawing::Size(989, 22);
+			this->sStatus->Size = System::Drawing::Size(660, 22);
 			this->sStatus->TabIndex = 0;
 			this->sStatus->Text = L"statusStrip1";
 			// 
 			// lblStatusSpring
 			// 
 			this->lblStatusSpring->Name = L"lblStatusSpring";
-			this->lblStatusSpring->Size = System::Drawing::Size(793, 17);
+			this->lblStatusSpring->Size = System::Drawing::Size(495, 17);
 			this->lblStatusSpring->Spring = true;
 			// 
 			// lblStatusCtrl
@@ -165,7 +164,7 @@ this->lblStatusAlt, this->lblStatusShift
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->BackColor = System::Drawing::Color::Silver;
-			this->ClientSize = System::Drawing::Size(989, 604);
+			this->ClientSize = System::Drawing::Size(660, 485);
 			this->Controls->Add(this->pBackground);
 			this->Name = L"frmMain";
 			this->Text = L"frmMain";

@@ -29,6 +29,8 @@ public class Pin {
 
 		void setBorder(bool);
 
+		std::vector<Line *> lines;
+
 	private:
 		//Block ^connection;
 		Point offsetPos;
@@ -41,5 +43,5 @@ public class Pin {
 		bool output;
 		bool negate;
 
-		std::vector<Line *> lines;
+		
 };

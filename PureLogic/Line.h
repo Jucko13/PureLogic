@@ -15,6 +15,9 @@ class Line {
 		~Line();
 		void setInput(Pin *b);
 		void setOutput(Pin *b);
+		Pin * getInput();
+		Pin * getOutput();
+
 		void draw(Graphics ^g);
 		void setState(bool);
 		bool getState();

@@ -16,7 +16,6 @@ value class PS {
 		static bool simulating;
 
 		static System::String ^ TooltipMessage;
-
 		static bool TooltipVisible;
 		static Point TooltipPos;
 
@@ -26,9 +25,7 @@ value class PS {
 		static System::Timers::Timer^ timerRefresh;
 		static bool refreshNeeded = false;
 
-		static bool keyShift = false;
-		static bool keyCtrl = false;
-		static bool keyAlt = false;
+		static System::Windows::Forms::KeyEventArgs^ keys;
 
 };
 

@@ -7,7 +7,6 @@
 #include "ColorStyle.h"
 #include "PS.h"
 
-
 using namespace System::Windows::Forms;
 using namespace PureLogic;
 
@@ -35,25 +34,55 @@ int main(array<String^> ^args) {
 	return 0;
 }
 
-Rectangle getAbsoluteRectFromPoints(Point p1, Point p2) {
-	Rectangle r;
-	if (p1.X < p2.X) {
-		r.X = p1.X;
-		r.Width = p2.X - p1.X;
+bool findRecursiveConnection(Pin * pStart, Pin * pEnd){
+	Block * bTmp;
+	Pin * pTmp;
+	Line * lTmp;
+
+	Pin * loopStart;
+
+	loopStart = pStart;
+
+	if (!pStart->isOutput()) { //is an input.
+		bTmp = pStart->getBlock();
+		pTmp = bTmp->output;
+		if (pTmp != pEnd) {
+			if (pTmp->isConnected()){
+				for (Line * l : pTmp->lines) {
+					if (findRecursiveConnection(l->getInput(), pEnd)) return true;
+				}
+			}else{
+				return false;
+			}
+		}else{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool getIntersectionOfRects(Rectangle *r1, Rectangle *r2) {
+	return (r1->X >= r2->X && r1->X <= r2->X + r2->Width || r2->X >= r1->X && r2->X <= r1->X + r1->Width) && (r1->Y >= r2->Y && r1->Y <= r2->Y + r2->Height || r2->Y >= r1->Y && r2->Y <= r1->Y + r1->Height);
+}
+
+bool getAbsoluteRectFromPoints(Point ^p1, Point ^p2,Rectangle *r) {
+	if (p1->Y < p2->Y) {
+		r->Y = p1->Y;
+		r->Height = p2->Y - p1->Y;
 	} else {
-		r.X = p2.X;
-		r.Width = p1.X - p2.X;
+		r->Y = p2->Y;
+		r->Height = p1->Y - p2->Y;
 	}
 
-	if (p1.Y < p2.Y) {
-		r.Y = p1.Y;
-		r.Height = p2.Y - p1.Y;
+	if (p1->X < p2->X) {
+		r->X = p1->X;
+		r->Width = p2->X - p1->X;
+		return false;
 	} else {
-		r.Y = p2.Y;
-		r.Height = p1.Y - p2.Y;
+		r->X = p2->X;
+		r->Width = p1->X - p2->X;
+		return true;
 	}
-
-	return r;
 }
 
 Pin * getPinAtPoint(Point p) {
@@ -97,14 +126,19 @@ void frmMain::Redraw() {
 
 
 void frmMain::pBackground_KeyDown(Object^  sender, KeyEventArgs^ e){
+	PS::keys = e;
+
 	if (e->Shift) lblStatusShift->Text = "Shift";
 	if (e->Alt) lblStatusAlt->Text = "Alt";
 	if (e->Control) lblStatusCtrl->Text = "Ctrl";
+
 	//PS::TooltipMessage = e->Shift + " " + e->Alt + " " + e->Control;
 	//PS::TooltipVisible = true;
 }
 
 void frmMain::pBackground_KeyUp(Object^  sender, KeyEventArgs^ e){
+	PS::keys = e;
+
 	if (!e->Shift) lblStatusShift->Text = "";
 	if (!e->Alt) lblStatusAlt->Text = "";
 	if (!e->Control) lblStatusCtrl->Text = "";
@@ -125,6 +159,7 @@ void frmMain::frmMain_Unload(Object^  sender, System::ComponentModel::CancelEven
 
 void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	//MessageBox::Show("Startup test");
+	
 	
 
 	ColorStyle::colorActive = Color(Color::FromArgb(255, 0, 0));
@@ -148,7 +183,18 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	ColorStyle::penMouseOver = gcnew Pen(ColorStyle::colorMouseOver);
 	ColorStyle::penSelected = gcnew Pen(ColorStyle::colorSelected);
 
-	ColorStyle::fontFamily = gcnew System::Drawing::Font("Courier New",8.0);
+	//dpi scaling compensation calculation
+	Graphics ^g = pBackground->CreateGraphics();
+	float scaleDpi = 96.0 / g->DpiX;
+	ColorStyle::fontFamily = gcnew System::Drawing::Font("Courier New", scaleDpi * 8.0);
+	lblStatusAlt->Font = gcnew System::Drawing::Font("Courier New", scaleDpi * 10.0);
+	lblStatusCtrl->Font = lblStatusAlt->Font;
+	lblStatusShift->Font = lblStatusAlt->Font;
+	lblStatusAlt->Text = "";
+	lblStatusCtrl->Text = "";
+	lblStatusShift->Text = "";
+	delete g;
+
 	ColorStyle::fontFormatFar = gcnew StringFormat();
 	ColorStyle::fontFormatFar->LineAlignment = System::Drawing::StringAlignment::Far;
 
@@ -162,7 +208,7 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	PS::TooltipMessage = "";
 	PS::TooltipVisible = false;
 	
-	PS::timerRefresh = gcnew System::Timers::Timer(10);
+	PS::timerRefresh = gcnew System::Timers::Timer(1);
 	PS::timerRefresh->BeginInit();
 	PS::timerRefresh->AutoReset = false;
 	PS::timerRefresh->Elapsed += gcnew System::Timers::ElapsedEventHandler(this, &frmMain::timerRefresh_Tick);
@@ -170,12 +216,14 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 
 	PS::timerRefresh->Start();
 
+	PS::keys = gcnew KeyEventArgs(System::Windows::Forms::Keys::None);
+
 	int i = 0;
 	int j = 0;
 	int t = 0;
 
-	for (j = 0; j < 4; j++) {
-		for (i = 0; i < 10*4; i+=4) {
+	//for (j = 0; j < 4; j++) {
+		for (i = 0; i < 5*4; i+=4) {
 			
 			connectionLines.push_back(new Line);
 			connectionLines.push_back(new Line);
@@ -183,36 +231,35 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 			connectionLines.push_back(new Line);
 
 			blocks.push_back(new Input); //inpu
-			blocks[t]->setPos(50 + j * 250, 20 + (i / 4) * 70);
+			blocks[t]->setPos(50 + j * 250, 50 + (i / 4) * 70);
 			blocks[t]->attachLine(connectionLines[t], -1, 1);
 			blocks[t]->attachLine(connectionLines[t + 3], -1, 1);
-			//blocks[t]->selected = true;
-
+			
 
 			blocks.push_back(new Input); //inpu2
-			blocks[t + 1]->setPos(50 + j * 250, 56 + (i / 4) * 70);
+			blocks[t + 1]->setPos(50 + j * 250, 86 + (i / 4) * 70);
 			blocks[t + 1]->attachLine(connectionLines[t + 1], -1, 1);
 
 			blocks.push_back(new AND); //mygate
-			blocks[t + 2]->setPos(150 + j * 250, 20 + (i / 4) * 70);
+			blocks[t + 2]->setPos(150 + j * 250, 50 + (i / 4) * 70);
 			blocks[t + 2]->attachLine(connectionLines[t], -1, 0); //input
 			blocks[t + 2]->pinAdd();
 			blocks[t + 2]->pinAdd();
 			blocks[t + 2]->pinAdd();
 			blocks[t + 2]->pinAdd();
 			blocks[t + 2]->inputs[4]->setNegate(true);
-			//blocks[i + 2]->inputs[0]->setNegate(true);
+			blocks[t + 2]->inputs[0]->setNegate(true);
 			blocks[t + 2]->attachLine(connectionLines[t + 1], 4, 0); //input
 			blocks[t + 2]->attachLine(connectionLines[t + 2], -1, 1); //output
 			blocks[t + 2]->attachLine(connectionLines[t + 3], -1, 0);
 
 			blocks.push_back(new AND); //mygate2
-			blocks[t + 3]->setPos(220 + j * 250, 20 + (i / 4) * 70);
+			blocks[t + 3]->setPos(220 + j * 250, 50 + (i / 4) * 70);
 			blocks[t + 3]->attachLine(connectionLines[t + 2], -1, 0);
 			t += 4;
 		}
 		
-	}
+	//}
 
 	for (Block * b : blocks) {
 		b->execute();
@@ -226,7 +273,7 @@ void frmMain::pBackground_MouseDown(System::Object^ sender, System::Windows::For
 	pBackground->Focus();
 	
 	if (e->Button == System::Windows::Forms::MouseButtons::Left) {
-
+		
 		for (Block * b : blocks) {
 			if (b->pointInside(e->Location)) b->mouseDown(e->Location);
 		}
@@ -241,7 +288,9 @@ void frmMain::pBackground_MouseDown(System::Object^ sender, System::Windows::For
 		
 		dragStartPin = getPinAtPoint(e->Location);
 		if (dragStartPin != 0) {
-			dragStart = e->Location;
+			dragStart = dragStartPin->getPos();
+			dragStart.X += (dragStartPin->isOutput() ? 10 : 0);
+
 			dragCurrent = e->Location;
 			isDragging = true;
 			pBackground_MouseMove(sender, e);
@@ -286,8 +335,25 @@ void frmMain::pBackground_MouseMove(System::Object^ sender, System::Windows::For
 				PS::TooltipVisible = true;
 				PS::TooltipMessage = "PIN connection not allowed!\nINPUT PIN Already Connected!";
 			} else {
-				PS::TooltipVisible = false;
-				PS::TooltipMessage = "";
+				
+				
+				Pin * pin1 = PS::mouseOverPin;
+				Pin * pin2 = dragStartPin;
+				Pin * pintemp;
+				if (pin1->isOutput()) {
+					pintemp = pin1;
+					pin1 = pin2;
+					pin2 = pintemp;
+				}
+
+				if(findRecursiveConnection(pin1,pin2)){
+
+					PS::TooltipVisible = true;
+					PS::TooltipMessage = "PIN connection not allowed!\nFor RECURSIVE Operations use a MARKER!";
+				}else{
+					PS::TooltipVisible = false;
+					PS::TooltipMessage = "";
+				}
 			}
 		}
 		PS::mouseOverPin->setBorder(true);
@@ -310,39 +376,54 @@ void frmMain::pBackground_MouseUp(System::Object^ sender, System::Windows::Forms
 	Pin * pin1;
 	Pin * pin2;
 	Pin * pintemp;
+	Rectangle selection;
 
 	if (e->Button == System::Windows::Forms::MouseButtons::Left) {
+		bool checkSelect = (isDragging && dragStart != dragCurrent);
+
+		
 		for (Block * b : blocks) {
 			b->mouseUp(e->Location);
 
-			if (isDragging) {
+			if (!PS::keys->Control && !PS::keys->Shift){
 				b->selected = false;
-				if (getAbsoluteRectFromPoints(dragStart, dragCurrent).Contains(b->getPos())) {
-					b->selected = true;
+			}
+
+			if (isDragging) {
+				if(getAbsoluteRectFromPoints(dragStart, dragCurrent, &selection)){
+					if (getIntersectionOfRects(&b->getPos(), &selection)){
+						b->selected = (PS::keys->Shift ? !b->selected : true);
+					}
+				}else{
+					if (selection.Contains(b->getPos())) {
+						b->selected = (PS::keys->Shift ? !b->selected : true);
+					}
 				}
-
-			}else{
-
 			}
 		}
 
-		bool checkSelect = (isDragging && dragStart != dragCurrent);
-
+		
 		for (Line * l : connectionLines) {
-			l->selected = false;
+			if (!PS::keys->Control && !PS::keys->Shift) {
+				l->selected = false;
+			}
+
 			if (checkSelect) {
-				if (getAbsoluteRectFromPoints(dragStart, dragCurrent).Contains(l->getPos())) {
+				if (getAbsoluteRectFromPoints(dragStart, dragCurrent, &selection)) {
+					if (getIntersectionOfRects(&l->getPos(), &selection)) {
+						l->selected = (PS::keys->Shift ? !l->selected : true);
+					}
+				}else{
+					if (selection.Contains(l->getPos())) {
+						l->selected = (PS::keys->Shift ? !l->selected : true);
+					}
+				}
+			}else{
+				if (l->isPointOnLine(dragStart)) {
 					l->selected = true;
 				}
 			}
 		}
-
-		Line * li = getLineAtPoint(dragStart);
-
-		if(li != 0){
-			li->selected = true;
-		}
-
 		isDragging = false;
 
 	} else if (e->Button == System::Windows::Forms::MouseButtons::Right) {
@@ -362,7 +443,7 @@ void frmMain::pBackground_MouseUp(System::Object^ sender, System::Windows::Forms
 					pin2 = pintemp;
 				}
 
-				if (!pin2->isConnected()){
+				if (!pin2->isConnected() && !findRecursiveConnection(pin2, pin1)) {
 
 					Line * l = new Line;
 					connectionLines.push_back(l);
@@ -405,20 +486,26 @@ void frmMain::cmdRemove_Click(Object^  sender, EventArgs^  e) {
 
 void frmMain::pBackground_Paint(Object^  sender, PaintEventArgs^  e) {
 
-	System::Drawing::Graphics ^g = e->Graphics;
-	Drawing::SolidBrush ^programBackground = gcnew Drawing::SolidBrush(Color::FromArgb(180, 180, 180));
-	Drawing::Pen ^blockBorder = gcnew Pen(Drawing::Color::Black);
-	
-	Drawing::SolidBrush ^selectionBack = gcnew Drawing::SolidBrush(Color::FromArgb(80, 0, 162, 232));
-	Drawing::Pen ^selectionBorder = gcnew Pen(Color::FromArgb(0, 162, 232));
+	Graphics ^g = e->Graphics;
+	SolidBrush ^programBackground = gcnew SolidBrush(Color::FromArgb(180, 180, 180));
+	Pen ^blockBorder = gcnew Pen(Color::Black);
+	Brush ^grid = gcnew SolidBrush(Color::Black);
 
-	//e->Graphics->
+	Drawing::SolidBrush ^selectionBack;  //= gcnew Drawing::SolidBrush(Color::FromArgb(80, 0, 162, 232));
+	Drawing::Pen ^selectionBorder;  //= gcnew Pen(Color::FromArgb(0, 162, 232));
 
-	//g->SmoothingMode = System::Drawing::Drawing2D::SmoothingMode::AntiAlias;
+	g->SmoothingMode = System::Drawing::Drawing2D::SmoothingMode::HighSpeed;
 
 
 	//paint background
 	//g->FillRectangle(programBackground, frmMain::ClientRectangle);
+
+	for(int X = 0; X < ClientRectangle.Width; X+=9){
+		for (int Y = 0; Y < ClientRectangle.Height; Y += 9) {
+			g->FillRectangle(grid, X, Y, 1, 1);
+		}
+	}
+
 
 	for (Block * b : blocks) {
 		b->draw(g);
@@ -432,10 +519,23 @@ void frmMain::pBackground_Paint(Object^  sender, PaintEventArgs^  e) {
 		if (dragStartPin != 0){
 			g->DrawLine(blockBorder, dragStart, dragCurrent);
 		}else{
-			Rectangle selection = getAbsoluteRectFromPoints(dragStart, dragCurrent);
+			Rectangle selection;
+
+			if (getAbsoluteRectFromPoints(dragStart, dragCurrent, &selection)) {
+				selectionBack = gcnew Drawing::SolidBrush(Color::FromArgb(80, 0, 232, 40));
+				selectionBorder = gcnew Pen(Color::FromArgb(0, 232, 40));
+				selectionBorder->DashStyle = Drawing2D::DashStyle::Dash;
+			}else{
+				selectionBack = gcnew Drawing::SolidBrush(Color::FromArgb(80, 0, 162, 232));
+				selectionBorder = gcnew Pen(Color::FromArgb(0, 162, 232));
+				
+			}
 
 			g->FillRectangle(selectionBack, selection);
 			g->DrawRectangle(selectionBorder, selection);
+
+			//PS::TooltipMessage = "w: " + selection.Width;
+			//PS::TooltipVisible = true;
 		}
 	}
 	

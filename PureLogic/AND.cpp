@@ -10,7 +10,7 @@ AND::AND(): Block("AND Gate") {
 
 	pinAdd();
 	output = new Pin(this,0,6,1);
-	output->setNegate(true);
+	//output->setNegate(true);
 }
 
 AND::~AND() {
@@ -64,8 +64,11 @@ void AND::pinRemove() {
 
 
 bool AND::execute() {
+	int connectedCount = 0;
+
 	for (Pin *i : inputs) {
 		if (i->isConnected()) {
+			connectedCount++;
 			if (i->getState() == false) {
 				if (active != false){
 					active = false;
@@ -75,7 +78,8 @@ bool AND::execute() {
 			}
 		}
 	}
-	if (active != true) {
+
+	if (active != true && connectedCount > 0) {
 		active = true;
 		output->setState(true);
 	}

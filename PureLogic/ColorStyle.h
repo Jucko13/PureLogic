@@ -31,6 +31,7 @@ public:
 	static Font ^ fontFamily;
 	static StringFormat ^ fontFormatCenter;
 	static StringFormat ^ fontFormatFar;
+	static bool fontInitialized;
 
 };
 
