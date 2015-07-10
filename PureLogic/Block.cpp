@@ -28,6 +28,7 @@ std::string Block::getName() {
 
 void Block::draw(Graphics ^g) {
 	if (!selected) return;
+	if (PS::dragMode == PS::dragType::moving) return;
 
 	g->FillRectangle(ColorStyle::brushSelected, pos.X - 3 + posOffset.X, pos.Y - 3 + posOffset.Y, 6, 6);
 	g->DrawRectangle(ColorStyle::penNormal, pos.X - 3 + posOffset.X, pos.Y - 3 + posOffset.Y, 6, 6);

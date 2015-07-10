@@ -5,6 +5,8 @@
 
 #include <string>
 
+#include <cliext/vector>
+
 using namespace std;
 using namespace System::Drawing;
 
@@ -32,6 +34,8 @@ value class PS {
 		static Line * mouseOverLine = 0;
 
 		static System::Timers::Timer^ timerRefresh;
+		static System::Timers::Timer^ timerRecursive;
+
 		static bool refreshNeeded = false;
 
 		static System::Windows::Forms::KeyEventArgs^ keys;
@@ -40,5 +44,7 @@ value class PS {
 		static Point dragCurrent;
 		static Pin * dragStartPin;
 		static dragType dragMode;
+
+		static double zoom;
 };
 

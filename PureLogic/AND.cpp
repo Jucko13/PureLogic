@@ -96,6 +96,12 @@ void AND::draw(Graphics ^g) {
 
 	Rectangle rect = getPos();
 
+	//rect.X *= PS::zoom;
+	//rect.Y *= PS::zoom;
+	//rect.Width *= PS::zoom;
+	//rect.Height *= PS::zoom;
+
+
 	output->draw(g);
 
 	for (Pin *i : inputs) {
@@ -137,7 +143,7 @@ void AND::draw(Graphics ^g) {
 		}
 	}
 
-	g->DrawString("&", ColorStyle::fontFamily, b, Rectangle(rect.X, rect.Y, rect.Width, 12), ColorStyle::fontFormatCenter);
+	g->DrawString("&", ColorStyle::fontFamily, b, Rectangle(rect.X, rect.Y, rect.Width, ColorStyle::fontFamily->Size), ColorStyle::fontFormatCenter);
 
 
 	Block::draw(g);

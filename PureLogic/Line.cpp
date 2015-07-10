@@ -1,14 +1,21 @@
 #include "Line.h"
 
 using namespace System::Drawing;
+using namespace System::Timers;
 
-Line::Line() {
+//Line::Line() {
+//	mouseOver = false;
+//	positive = false;
+//	recursive = false;
+//	nextState = false;
+//}
+
+Line::Line(void (* f)(Line*)) {
 	mouseOver = false;
 	positive = false;
-}
-
-Line::Line(Pin*i, Pin*o) : Input(i), Output(o) {
-
+	recursive = false;
+	nextState = false;
+	addToQuery = f;
 }
 
 
@@ -23,6 +30,19 @@ Line::~Line() {
 		Output = 0;
 	}
 }
+
+void Line::setRecursive(bool newState) {
+	recursive = newState;
+}
+
+//void Line::tmrRecursive_Tick(System::Object ^sender, System::Timers::ElapsedEventArgs ^e) {
+	
+//}
+
+bool Line::getRecursive() {
+	return recursive;
+}
+
 
 int min(int n1, int n2){
 	return (n1 < n2 ? n1 : n2);
@@ -96,7 +116,10 @@ void Line::draw(Graphics ^g) {
 		
 	}
 
+	if (recursive) p->DashStyle = Drawing2D::DashStyle::Dash;
 	g->DrawLine(p, pos1.X, pos1.Y, pos2.X + 10, pos2.Y);
+	if (recursive) p->DashStyle = Drawing2D::DashStyle::Solid;
+
 
 	if(selected){
 		g->FillRectangle(ColorStyle::brushSelected, pos1.X - 3, pos1.Y - 3, 6, 6);
@@ -137,11 +160,22 @@ Pin * Line::getOutput() {
 	return Output;
 }
 
+void Line::activateRecursive(){
+	if (recursive) {
+		Input->setState(nextState);
+	}
+}
 
 void Line::setState(bool newState) {
 	positive = newState;
 	if (Input == 0) return;
-	Input->setState(newState);
+
+	if(recursive){
+		nextState = positive;
+		addToQuery(this);
+	}else{
+		Input->setState(newState);
+	}
 }
 
 bool Line::getState() {

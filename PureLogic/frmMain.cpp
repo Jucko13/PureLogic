@@ -22,8 +22,12 @@ using namespace System::Drawing;
 
 vector<Line *> connectionLines;
 vector<Block *> blocks;
+vector<Line *> recurse;
 
 bool isRefreshing = false;
+
+int repeatCounter = 0;
+
 
 [STAThread]
 int main(array<String^> ^args) {
@@ -49,6 +53,7 @@ bool findRecursiveConnection(Pin * pStart, Pin * pEnd){
 		if (pTmp != pEnd) {
 			if (pTmp->isConnected()){
 				for (Line * l : pTmp->lines) {
+					if(l->getRecursive()) return false;
 					if (findRecursiveConnection(l->getInput(), pEnd)) return true;
 				}
 			}else{
@@ -165,10 +170,37 @@ unsigned long createRGB(int r, int g, int b) {
 	return r + (g * 256) + (b * 256 * 256);
 }
 
+void addLineToQuery(Line * l) {
+	recurse.push_back(l);
+	//PS::refreshNeeded = true;
+	//MessageBox::Show("added!");
+}
+
+void frmMain::timerRecursive_Tick(Object^ state, System::Timers::ElapsedEventArgs^ e) {
+	unsigned int s = recurse.size();
+	if (s > 0) {
+		for (unsigned int i = 0; i < s; i++) {
+			if (recurse[i]){
+				recurse[i]->activateRecursive();
+				repeatCounter++;
+			}
+			recurse[i] = NULL;
+		}
+
+		PS::refreshNeeded = true;
+		PS::TooltipMessage = "count: " + repeatCounter;
+		PS::TooltipVisible = true;
+		recurse.erase(std::remove(recurse.begin(), recurse.end(), static_cast<Line*>(NULL)), recurse.end());
+
+	}
+}
+
+
 void frmMain::timerRefresh_Tick(Object^ state, System::Timers::ElapsedEventArgs^ e) {
 	if (PS::refreshNeeded) {
 		this->pBackground->Invalidate();
 		PS::refreshNeeded = false;
+		
 	}
 }
 
@@ -252,14 +284,14 @@ void frmMain::frmMain_Unload(Object^  sender, System::ComponentModel::CancelEven
 void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	//MessageBox::Show("Startup test");
 	
-	
+	pBackground->BackColor = Color(Color::FromArgb(180, 180, 180));
 
-	ColorStyle::colorActive = Color(Color::FromArgb(255, 0, 0));
-	ColorStyle::colorInactive = Color(Color::FromArgb(0, 0, 255));
-	ColorStyle::colorNormal = Color(Color::FromArgb(0, 0, 0));
-	ColorStyle::colorBack = Color(Color::FromArgb(255, 222, 140));
-	ColorStyle::colorMouseOver = Color(Color::FromArgb(0, 255, 0));
-	ColorStyle::colorSelected = Color(Color::FromArgb(120, 255, 0, 0));
+	ColorStyle::colorActive = Color(Color::FromArgb(255, 0, 0));        //255, 0, 0
+	ColorStyle::colorInactive = Color(Color::FromArgb(0, 0, 255));      //0, 0, 255
+	ColorStyle::colorNormal = Color(Color::FromArgb(0, 0, 0));          //0, 0, 0
+	ColorStyle::colorBack = Color(Color::FromArgb(82, 204, 255));        //255, 222, 140
+	ColorStyle::colorMouseOver = Color(Color::FromArgb(0, 255, 0));     //0, 255, 0
+	ColorStyle::colorSelected = Color(Color::FromArgb(120, 255, 0, 0)); //120, 255, 0, 0
 
 	ColorStyle::brushActive = gcnew SolidBrush(ColorStyle::colorActive);
 	ColorStyle::brushInactive = gcnew SolidBrush(ColorStyle::colorInactive);
@@ -275,11 +307,13 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	ColorStyle::penMouseOver = gcnew Pen(ColorStyle::colorMouseOver);
 	ColorStyle::penSelected = gcnew Pen(ColorStyle::colorSelected);
 
+	PS::zoom = 1.0;
+	 
 	//dpi scaling compensation calculation
 	Graphics ^g = pBackground->CreateGraphics();
 	float scaleDpi = 96.0f / g->DpiX;
-	ColorStyle::fontFamily = gcnew System::Drawing::Font("Courier New", scaleDpi * 8.0f);
-	lblStatusAlt->Font = gcnew System::Drawing::Font("Courier New", scaleDpi * 10.0f);
+	ColorStyle::fontFamily = gcnew System::Drawing::Font("Courier New", scaleDpi * 8.0f * PS::zoom);
+	lblStatusAlt->Font = gcnew System::Drawing::Font("Courier New", scaleDpi * 10.0f * PS::zoom);
 	lblStatusCtrl->Font = lblStatusAlt->Font;
 	lblStatusShift->Font = lblStatusAlt->Font;
 	lblStatusAlt->Text = "";
@@ -300,13 +334,21 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	PS::TooltipMessage = "";
 	PS::TooltipVisible = false;
 	
-	PS::timerRefresh = gcnew System::Timers::Timer(1);
+	PS::timerRefresh = gcnew System::Timers::Timer(10);
 	PS::timerRefresh->BeginInit();
 	PS::timerRefresh->AutoReset = true;
 	PS::timerRefresh->Elapsed += gcnew System::Timers::ElapsedEventHandler(this, &frmMain::timerRefresh_Tick);
 	PS::timerRefresh->EndInit();
 
 	PS::timerRefresh->Start();
+
+	PS::timerRecursive = gcnew System::Timers::Timer(1);
+	PS::timerRecursive->BeginInit();
+	PS::timerRecursive->AutoReset = true;
+	PS::timerRecursive->Elapsed += gcnew System::Timers::ElapsedEventHandler(this, &frmMain::timerRecursive_Tick);
+	PS::timerRecursive->EndInit();
+	PS::timerRecursive->Start();
+
 
 	PS::keys = gcnew KeyEventArgs(System::Windows::Forms::Keys::None);
 
@@ -335,12 +377,12 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 			blocks.push_back(new AND); //mygate
 			blocks[t + 2]->setPos(150 + j * 250, 50 + (i / 4) * 70);
 			//blocks[t + 2]->attachLine(connectionLines[t], -1, 0); //input
-			blocks[t + 2]->pinAdd();
-			blocks[t + 2]->pinAdd();
-			blocks[t + 2]->pinAdd();
-			blocks[t + 2]->pinAdd();
-			blocks[t + 2]->inputs[4]->setNegate(true);
-			blocks[t + 2]->inputs[0]->setNegate(true);
+			//blocks[t + 2]->pinAdd();
+			//blocks[t + 2]->pinAdd();
+			//blocks[t + 2]->pinAdd();
+			//blocks[t + 2]->pinAdd();
+			//blocks[t + 2]->inputs[4]->setNegate(true);
+			//blocks[t + 2]->inputs[0]->setNegate(true);
 			//blocks[t + 2]->attachLine(connectionLines[t + 1], 4, 0); //input
 			//blocks[t + 2]->attachLine(connectionLines[t + 2], -1, 1); //output
 			//blocks[t + 2]->attachLine(connectionLines[t + 3], -1, 0);
@@ -561,13 +603,17 @@ void frmMain::pBackground_MouseUp(System::Object^ sender, System::Windows::Forms
 					pin2 = pintemp;
 				}
 
-				if (!pin2->isConnected() && !findRecursiveConnection(pin2, pin1)) {
-
-					Line * l = new Line;
+				if (!pin2->isConnected()) {
+					
+					Line * l = new Line(&addLineToQuery);
 					connectionLines.push_back(l);
 
 					pin1->attachLine(l);
 					pin2->attachLine(l);
+
+					if (findRecursiveConnection(pin2, pin1)){
+						l->setRecursive(true);
+					}
 
 					//pin1->getBlock()->attachLine(l, -1, 1);
 					//pin2->getBlock()->attachLine(l, -1, 0);
@@ -619,17 +665,20 @@ void frmMain::pBackground_Paint(Object^  sender, PaintEventArgs^  e) {
 	Drawing::Pen ^selectionBorder;  //= gcnew Pen(Color::FromArgb(0, 162, 232));
 
 	g->SmoothingMode = System::Drawing::Drawing2D::SmoothingMode::HighSpeed;
+	//g->PixelOffsetMode = System::Drawing::Drawing2D::PixelOffsetMode::HighSpeed;
 
+	//g->RenderingOrigin = Point(-50,-50);
 
 	//paint background
 	//g->FillRectangle(programBackground, frmMain::ClientRectangle);
 
-	for(int X = 0; X < ClientRectangle.Width; X+=10){
-		for (int Y = 0; Y < ClientRectangle.Height; Y += 10) {
-			g->FillRectangle(grid, X, Y, 1, 1);
+	if(!PS::simulating){
+		for(int X = 0; X < ClientRectangle.Width; X+=10){
+			for (int Y = 0; Y < ClientRectangle.Height; Y += 10) {
+				g->FillRectangle(grid, X, Y, 1, 1);
+			}
 		}
 	}
-
 
 	for (Block * b : blocks) {
 		b->draw(g);
