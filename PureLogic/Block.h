@@ -53,7 +53,6 @@ class Block abstract {
 		Point posOffset;
 
 	private:
-		
 		std::string name;
 		
 

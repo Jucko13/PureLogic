@@ -27,6 +27,11 @@ std::string Block::getName() {
 }
 
 void Block::draw(Graphics ^g) {
+	
+	if (PS::keys->Alt || PS::keys->Control || PS::keys->Shift) {
+		g->DrawString(gcnew System::String(name.c_str()), ColorStyle::fontFamily, ColorStyle::brushNormal, pos.X + pos.Width / 2, pos.Y - ColorStyle::fontFamily->Size, ColorStyle::fontFormatCenter);
+	}
+
 	if (!selected) return;
 	if (PS::dragMode == PS::dragType::moving) return;
 

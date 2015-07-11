@@ -31,7 +31,7 @@ int repeatCounter = 0;
 
 [STAThread]
 int main(array<String^> ^args) {
-	//Application::EnableVisualStyles();
+	Application::EnableVisualStyles();
 	Application::SetCompatibleTextRenderingDefault(false);
 
 	PureLogic::frmMain form;
@@ -70,6 +70,23 @@ bool getIntersectionOfRects(Rectangle *r1, Rectangle *r2) {
 	return (r1->X >= r2->X && r1->X <= r2->X + r2->Width || r2->X >= r1->X && r2->X <= r1->X + r1->Width) && (r1->Y >= r2->Y && r1->Y <= r2->Y + r2->Height || r2->Y >= r1->Y && r2->Y <= r1->Y + r1->Height);
 }
 
+void removeLine(Line * l){
+	if (l->getRecursive()) {
+		for (unsigned int j = 0; j < recurse.size(); j++) {
+			if (recurse[j] == l) {
+				recurse[j] = NULL;
+			}
+		}
+	}
+
+	for (unsigned int j = 0; j < connectionLines.size(); j++) {
+		if (connectionLines[j] == l) {
+			delete connectionLines[j];
+			connectionLines[j] = NULL;
+		}
+	}
+}
+
 
 void removeSelectedItems() {
 	for (unsigned int i = 0; i < blocks.size(); i++) {
@@ -78,26 +95,15 @@ void removeSelectedItems() {
 			for (Pin * p : blocks[i]->inputs) {
 				if (p->isConnected()) {
 					while (p->lines.size() > 0) {
-						Line *l = p->lines[0];
-						for (unsigned int j = 0; j < connectionLines.size(); j++) {
-							if (l == connectionLines[j]) {
-								delete connectionLines[j];
-								connectionLines[j] = NULL;
-							}
-						}
+						removeLine(p->lines[0]);
 					}
 				}
 			}
 
 			if (blocks[i]->output->isConnected()) {
 				while (blocks[i]->output->lines.size() > 0) {
-					Line *l = blocks[i]->output->lines[0];
-					for (unsigned int j = 0; j < connectionLines.size(); j++) {
-						if (connectionLines[j] == l) {
-							delete connectionLines[j];
-							connectionLines[j] = NULL;
-						}
-					}
+					removeLine(blocks[i]->output->lines[0]);
+					
 				}
 			}
 
@@ -108,6 +114,14 @@ void removeSelectedItems() {
 
 	for (unsigned int j = 0; j < connectionLines.size(); j++) {
 		if (connectionLines[j] != 0 && connectionLines[j]->selected) {
+			if (connectionLines[j]->getRecursive()) {
+				for (unsigned int k = 0; k < recurse.size(); k++) {
+					if (recurse[k] == connectionLines[j]) {
+						recurse[k] = NULL;
+					}
+				}
+			}
+
 			delete connectionLines[j];
 			connectionLines[j] = NULL;
 		}
@@ -171,6 +185,13 @@ unsigned long createRGB(int r, int g, int b) {
 }
 
 void addLineToQuery(Line * l) {
+	bool found = false;
+	for(Line * l1: recurse){
+		if (l1 == l){
+			if (found) return;
+			found = true;
+		}
+	}
 	recurse.push_back(l);
 	//PS::refreshNeeded = true;
 	//MessageBox::Show("added!");
@@ -187,10 +208,11 @@ void frmMain::timerRecursive_Tick(Object^ state, System::Timers::ElapsedEventArg
 			recurse[i] = NULL;
 		}
 
-		PS::refreshNeeded = true;
-		PS::TooltipMessage = "count: " + repeatCounter;
-		PS::TooltipVisible = true;
 		recurse.erase(std::remove(recurse.begin(), recurse.end(), static_cast<Line*>(NULL)), recurse.end());
+
+		PS::refreshNeeded = true;
+		PS::TooltipMessage = "count: " + s;
+		PS::TooltipVisible = true;
 
 	}
 }
@@ -220,6 +242,14 @@ void frmMain::pBackground_KeyDown(Object^  sender, KeyEventArgs^ e){
 				}
 			}
 		break;
+
+		case Keys::F2:
+			tcmdSimulateStart->PerformClick();
+			break;
+
+		case Keys::F3:
+			tcmdSimulateStop->PerformClick();
+			break;
 
 		case Keys::Escape:
 			switch (PS::dragMode) {
@@ -334,7 +364,7 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	PS::TooltipMessage = "";
 	PS::TooltipVisible = false;
 	
-	PS::timerRefresh = gcnew System::Timers::Timer(10);
+	PS::timerRefresh = gcnew System::Timers::Timer(9);
 	PS::timerRefresh->BeginInit();
 	PS::timerRefresh->AutoReset = true;
 	PS::timerRefresh->Elapsed += gcnew System::Timers::ElapsedEventHandler(this, &frmMain::timerRefresh_Tick);
@@ -347,7 +377,7 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	PS::timerRecursive->AutoReset = true;
 	PS::timerRecursive->Elapsed += gcnew System::Timers::ElapsedEventHandler(this, &frmMain::timerRecursive_Tick);
 	PS::timerRecursive->EndInit();
-	PS::timerRecursive->Start();
+	//PS::timerRecursive->Start();
 
 
 	PS::keys = gcnew KeyEventArgs(System::Windows::Forms::Keys::None);
@@ -414,7 +444,7 @@ void frmMain::pBackground_MouseDown(System::Object^ sender, System::Windows::For
 		Line * l = getLineAtPoint(e->Location);
 
 
-		if ((b != 0 && b->selected) || (l != 0 && l->selected)) {
+		if (((b != 0 && b->selected) || (l != 0 && l->selected)) && !PS::simulating) {
 			PS::dragMode = PS::dragType::moving;
 		}else{
 			PS::dragMode = PS::dragType::selecting;
@@ -429,7 +459,7 @@ void frmMain::pBackground_MouseDown(System::Object^ sender, System::Windows::For
 	} else if (e->Button == System::Windows::Forms::MouseButtons::Right) {
 		
 		PS::dragStartPin = getPinAtPoint(e->Location);
-		if (PS::dragStartPin != 0) {
+		if (PS::dragStartPin != 0 && !PS::simulating) {
 			PS::dragStart = PS::dragStartPin->getPos();
 			PS::dragStart.X += (PS::dragStartPin->isOutput() ? 10 : 0);
 
@@ -504,7 +534,7 @@ void frmMain::pBackground_MouseMove(System::Object^ sender, System::Windows::For
 
 				if(findRecursiveConnection(pin1,pin2)){
 					PS::TooltipVisible = true;
-					PS::TooltipMessage = "PIN connection not allowed!\nFor RECURSIVE Operations use a MARKER!";
+					PS::TooltipMessage = "Release to create RecursiveLine";
 				}else{
 					PS::TooltipVisible = false;
 					PS::TooltipMessage = "";
@@ -588,52 +618,53 @@ void frmMain::pBackground_MouseUp(System::Object^ sender, System::Windows::Forms
 		}
 
 	} else if (e->Button == System::Windows::Forms::MouseButtons::Right) {
-		PS::dragCurrent = e->Location;
+		if(!PS::simulating){
+			PS::dragCurrent = e->Location;
 
-		pin1 = getPinAtPoint(PS::dragStart);
-		pin2 = getPinAtPoint(PS::dragCurrent);
+			pin1 = getPinAtPoint(PS::dragStart);
+			pin2 = getPinAtPoint(PS::dragCurrent);
 
-		//if we found the pins, connect them if we have one input and one output
-		if (pin1 != 0 && pin2 != 0) {
-			if (pin1->isOutput() ^ pin2->isOutput()) {
+			//if we found the pins, connect them if we have one input and one output
+			if (pin1 != 0 && pin2 != 0) {
+				if (pin1->isOutput() ^ pin2->isOutput()) {
 				
-				if (pin2->isOutput()) {
-					pintemp = pin1;
-					pin1 = pin2;
-					pin2 = pintemp;
-				}
-
-				if (!pin2->isConnected()) {
-					
-					Line * l = new Line(&addLineToQuery);
-					connectionLines.push_back(l);
-
-					pin1->attachLine(l);
-					pin2->attachLine(l);
-
-					if (findRecursiveConnection(pin2, pin1)){
-						l->setRecursive(true);
+					if (pin2->isOutput()) {
+						pintemp = pin1;
+						pin1 = pin2;
+						pin2 = pintemp;
 					}
 
-					//pin1->getBlock()->attachLine(l, -1, 1);
-					//pin2->getBlock()->attachLine(l, -1, 0);
+					if (!pin2->isConnected()) {
+					
+						Line * l = new Line(&addLineToQuery);
+						connectionLines.push_back(l);
 
-					l->setState(pin1->getState());
-				} else {
-					//MessageBox::Show("Already Connected!");
-				}
+						pin1->attachLine(l);
+						pin2->attachLine(l);
+
+						if (findRecursiveConnection(pin2, pin1)){
+							l->setRecursive(true);
+						}
+
+						//pin1->getBlock()->attachLine(l, -1, 1);
+						//pin2->getBlock()->attachLine(l, -1, 0);
+
+						l->setState(pin1->getState());
+					} else {
+						//MessageBox::Show("Already Connected!");
+					}
 				
 
-			} else {
-				if (pin1 == pin2) {
-					pin1->setNegate(!pin1->isNegated());
 				} else {
-					//MessageBox::Show("Need one input and one output!");
-				}
+					if (pin1 == pin2) {
+						pin1->setNegate(!pin1->isNegated());
+					} else {
+						//MessageBox::Show("Need one input and one output!");
+					}
 				
+				}
 			}
 		}
-
 	}
 
 	PS::dragMode = PS::dragType::none;
@@ -643,14 +674,24 @@ void frmMain::pBackground_MouseUp(System::Object^ sender, System::Windows::Forms
 }
 
 
-void frmMain::cmdAdd_Click(Object^  sender, EventArgs^  e) {
-	PS::simulating = !PS::simulating;
+void frmMain::tcmdSimulateStart_Click(Object^  sender, EventArgs^  e) {
+	if (PS::simulating) return;
 
-	if (!isRefreshing) frmMain::Refresh();
+	this->tcmdSimulateStart->Enabled = false;
+	this->tcmdSimulateStop->Enabled = true;
+	PS::simulating = true;
+	PS::timerRecursive->Start();
+	PS::refreshNeeded = true;
 }
 
-void frmMain::cmdRemove_Click(Object^  sender, EventArgs^  e) {
-	if (!isRefreshing) frmMain::Refresh();
+void frmMain::tcmdSimulateStop_Click(Object^  sender, EventArgs^  e) {
+	if (!PS::simulating) return;
+
+	this->tcmdSimulateStart->Enabled = true;
+	this->tcmdSimulateStop->Enabled = false;
+	PS::simulating = false;
+	PS::timerRecursive->Stop();
+	PS::refreshNeeded = true;
 }
 
 
