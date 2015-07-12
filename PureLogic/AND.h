@@ -21,7 +21,7 @@ class AND : public Block {
 
 		const bool mayAddPin = true;
 	private:
-		const int pinsMin = 1;
+		const int pinsMin = 2;
 		const int pinsMax = 10;
 };
 

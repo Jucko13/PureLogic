@@ -9,6 +9,7 @@ AND::AND(): Block("AND Gate") {
 	pos.Y = 50;
 
 	pinAdd();
+	pinAdd();
 	output = new Pin(this,0,10,1);
 	//output->setNegate(true);
 }
@@ -33,10 +34,10 @@ void AND::mouseDown(Point p) {
 	}else{
 		Point ^relative = gcnew Point(p.X - pos.X, p.Y - pos.Y);
 
-		if (relative->Y > pos.Height - 10 && relative->Y < pos.Height) {
-			if (relative->X > 2 && relative->X < 8) {
+		if (relative->Y > pos.Height - 16 && relative->Y < pos.Height) {
+			if (relative->X > 2 && relative->X < 10) {
 				pinAdd();
-			} else if (relative->X > 8 && relative->X < 14) {
+			} else if (relative->X > 10 && relative->X < 18) {
 				pinRemove();
 			}
 		}
@@ -128,16 +129,16 @@ void AND::draw(Graphics ^g) {
 
 
 	if (!PS::simulating){
-		int inputsize = inputs.size() - 1;
+		int inputsize = inputs.size();
 
-		if (inputsize >= 0 && inputsize < 9) {
-			if (!inputs[inputsize]->isConnected() && inputsize > 0) {
-				g->DrawString("+-", ColorStyle::fontFamily, b, Rectangle(rect.X, rect.Y, rect.Width, rect.Height), ColorStyle::fontFormatFar);
+		if (inputsize >= pinsMin && inputsize < pinsMax) {
+			if (!inputs[inputsize-1]->isConnected() && inputsize > pinsMin) {
+				g->DrawString("+-", ColorStyle::fontFamily, b, rect.X-1, rect.Y + rect.Height , ColorStyle::fontFormatFar);
 			} else {
 				g->DrawString("+", ColorStyle::fontFamily, b, Rectangle(rect.X, rect.Y, rect.Width, rect.Height), ColorStyle::fontFormatFar);
 			}
 		} else {
-			if (!inputs[inputsize]->isConnected()){
+			if (!inputs[inputsize-1]->isConnected()){
 				g->DrawString(" -", ColorStyle::fontFamily, b, Rectangle(rect.X, rect.Y, rect.Width, rect.Height), ColorStyle::fontFormatFar);
 			}
 		}

@@ -82,7 +82,7 @@ void Input::draw(Graphics ^g) {
 	g->DrawRectangle(p, rect.X, rect.Y, rect.Width, rect.Height); //35
 
 
-	g->DrawString("I", ColorStyle::fontFamily, b, Rectangle(rect.X, rect.Y, rect.Width, 12), ColorStyle::fontFormatCenter);
+	g->DrawString("I", ColorStyle::fontFamily, b, Rectangle(rect.X, rect.Y, rect.Width, rect.Height), ColorStyle::fontFormatCenter);
 
 	Block::draw(g);
 }

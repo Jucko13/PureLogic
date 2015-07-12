@@ -338,12 +338,13 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	ColorStyle::penSelected = gcnew Pen(ColorStyle::colorSelected);
 
 	PS::zoom = 1.0;
-	 
+	this->lstComponents->Columns[0]->AutoResize(System::Windows::Forms::ColumnHeaderAutoResizeStyle::ColumnContent);
+
 	//dpi scaling compensation calculation
 	Graphics ^g = pBackground->CreateGraphics();
 	float scaleDpi = 96.0f / g->DpiX;
-	ColorStyle::fontFamily = gcnew System::Drawing::Font("Courier New", scaleDpi * 8.0f * PS::zoom);
-	lblStatusAlt->Font = gcnew System::Drawing::Font("Courier New", scaleDpi * 10.0f * PS::zoom);
+	ColorStyle::fontFamily = gcnew System::Drawing::Font("Courier New", 14.0f , System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Pixel);
+	lblStatusAlt->Font = gcnew System::Drawing::Font("Courier New", 12.0f , System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Pixel);
 	lblStatusCtrl->Font = lblStatusAlt->Font;
 	lblStatusShift->Font = lblStatusAlt->Font;
 	lblStatusAlt->Text = "";
@@ -677,6 +678,7 @@ void frmMain::pBackground_MouseUp(System::Object^ sender, System::Windows::Forms
 void frmMain::tcmdSimulateStart_Click(Object^  sender, EventArgs^  e) {
 	if (PS::simulating) return;
 
+	//this->splitContainer1->Panel1Collapsed = !this->splitContainer1->Panel1Collapsed;
 	this->tcmdSimulateStart->Enabled = false;
 	this->tcmdSimulateStop->Enabled = true;
 	PS::simulating = true;
