@@ -23,5 +23,7 @@ class AND : public Block {
 	private:
 		const int pinsMin = 2;
 		const int pinsMax = 10;
+		Rectangle posPlus;
+		Rectangle posMin;
 };
 

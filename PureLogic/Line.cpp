@@ -54,7 +54,7 @@ int max(int n1, int n2) {
 
 bool Line::isPointOnLine(Point p) {
 	int x1 = Input->getPos().X;
-	int x2 = Output->getPos().X+10;
+	int x2 = Output->getPos().X + 10 * PS::zoom;
 	int y1 = Input->getPos().Y;
 	int y2 = Output->getPos().Y;
 
@@ -117,7 +117,7 @@ void Line::draw(Graphics ^g) {
 	}
 
 	if (recursive) p->DashStyle = Drawing2D::DashStyle::Dash;
-	g->DrawLine(p, pos1.X, pos1.Y, pos2.X + 10, pos2.Y);
+	g->DrawLine(p, pos1.X, pos1.Y, pos2.X + 10 * PS::zoom, pos2.Y);
 	if (recursive) p->DashStyle = Drawing2D::DashStyle::Solid;
 
 
@@ -125,8 +125,8 @@ void Line::draw(Graphics ^g) {
 		g->FillRectangle(ColorStyle::brushSelected, pos1.X - 3, pos1.Y - 3, 6, 6);
 		g->DrawRectangle(ColorStyle::penNormal, pos1.X - 3, pos1.Y - 3, 6, 6);
 
-		g->FillRectangle(ColorStyle::brushSelected, pos2.X - 3 + 10, pos2.Y - 3, 6, 6);
-		g->DrawRectangle(ColorStyle::penNormal, pos2.X - 3 + 10, pos2.Y - 3, 6, 6);
+		g->FillRectangle(ColorStyle::brushSelected, pos2.X - 3 + 10 * PS::zoom, pos2.Y - 3, 6, 6);
+		g->DrawRectangle(ColorStyle::penNormal, pos2.X - 3 + 10 * PS::zoom, pos2.Y - 3, 6, 6);
 	}
 }
 
@@ -136,10 +136,10 @@ Rectangle Line::getPos() {
 	Point pos1 = Input->getPos();
 	Point pos2 = Output->getPos();
 
-	r.X = min(pos1.X,pos2.X+10);
+	r.X = min(pos1.X, pos2.X + 10 * PS::zoom);
 	r.Y = min(pos1.Y, pos2.Y);
 
-	r.Width = abs(pos1.X - (pos2.X + 10));
+	r.Width = abs(pos1.X - (pos2.X + 10 * PS::zoom));
 	r.Height = abs(pos1.Y - pos2.Y);
 	return r;
 }

@@ -60,6 +60,13 @@ void Input::draw(Graphics ^g) {
 	pos.Width = 20;
 
 	Rectangle rect = getPos();
+	rect.X += PS::scroll.X;
+	rect.Y += PS::scroll.Y;
+
+	//rect.X *= PS::zoom;
+	//rect.Y *= PS::zoom;
+	//rect.Width *= PS::zoom;
+	//rect.Height *= PS::zoom;
 
 	output->draw(g);
 

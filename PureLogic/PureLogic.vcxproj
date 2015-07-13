@@ -84,12 +84,10 @@
   <ItemGroup>
     <ClCompile Include="AND.cpp" />
     <ClCompile Include="Block.cpp" />
-    <ClCompile Include="ColorStyle.cpp" />
     <ClCompile Include="frmMain.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="Pin.cpp" />
-    <ClCompile Include="PS.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AND.h" />
@@ -103,11 +101,13 @@
     <ClInclude Include="Line.h" />
     <ClInclude Include="Pin.h" />
     <ClInclude Include="PS.h" />
+    <ClInclude Include="RotationLabel.h" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.h</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ImportantFiles.resx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

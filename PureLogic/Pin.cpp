@@ -121,31 +121,39 @@ void Pin::draw(Graphics ^g) {
 	}
 
 	Rectangle blockPos = (*connectedBlock).getPos();
+	blockPos.X += PS::scroll.X;
+	blockPos.Y += PS::scroll.Y;
+
 	//g->SmoothingMode = System::Drawing::Drawing2D::SmoothingMode::AntiAlias; //turn on antialiasing
+	//blockPos.X *= PS::zoom;
+	//blockPos.Y *= PS::zoom;
+	//blockPos.Width *= PS::zoom;
+	//blockPos.Height *= PS::zoom;
 
 	if (output) {
-		pos.X = offsetPos.X + blockPos.X + blockPos.Width;
-		pos.Y = offsetPos.Y + blockPos.Y;
-		//pos.Y = offsetPos.Y + blockPos.Y + blockPos.Height / 2;
-
-		pos.Width = 10;
-		pos.Height = 0;
-
-		g->DrawLine(p, pos.X, pos.Y, pos.X + pos.Width, pos.Y);
-		if (negate) g->FillRectangle(n, pos.X, pos.Y - 2, 5, 5);
+		pos.X = offsetPos.X * PS::zoom + blockPos.X + blockPos.Width;
+		pos.Y = offsetPos.Y * PS::zoom + blockPos.Y;
+		if (negate) g->FillRectangle(n, pos.X, pos.Y - int(1 * PS::zoom) - 1, int(3 * PS::zoom) + 2, int(3 * PS::zoom) + 2);
 	} else {
-		
-		pos.X = offsetPos.X + blockPos.X - 10;
-		pos.Y = offsetPos.Y + blockPos.Y;
-		pos.Width = 10;
-		pos.Height = 0;
-
-		g->DrawLine(p, pos.X, pos.Y, pos.X + pos.Width, pos.Y);
-		if (negate) g->FillRectangle(n, pos.X - 4 + pos.Width, pos.Y - 2, 4, 5);
+		pos.X = offsetPos.X * PS::zoom + blockPos.X - 10 * PS::zoom;
+		pos.Y = offsetPos.Y * PS::zoom + blockPos.Y;
+		if (negate) g->FillRectangle(n, offsetPos.X * PS::zoom + blockPos.X - 5 * PS::zoom, pos.Y - int(1 * PS::zoom) - 1, int(3 * PS::zoom) + 2, int(3 * PS::zoom) + 2);
 	}
 
+	
+
+	pos.Width = 10 * PS::zoom;
+	pos.Height = 0;
+
+	g->DrawLine(p, pos.X, pos.Y, pos.X + pos.Width, pos.Y);
+	
+
+
 	if (border) {
-		g->DrawRectangle(ColorStyle::penInactive,pos.X-4,pos.Y-4,18,8);
+		//g->DrawRectangle(ColorStyle::penInactive, Rectangle(pos.X - 4.0f * PS::zoom, pos.Y - 3.0f * PS::zoom, 18.0f * PS::zoom, 8.0f * PS::zoom - 1));
+		
+
+		g->DrawRectangle(ColorStyle::penInactive, Rectangle(pos.X - 1 - int(2 * PS::zoom), pos.Y - 1 - int(2 * PS::zoom), 2 + (10 + 4) * PS::zoom, 2 + 4 * PS::zoom));
 	}
 
 }

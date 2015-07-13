@@ -21,14 +21,40 @@ value class PS {
 			none = 0,
 			selecting = 1,
 			moving = 2,
-			line = 3
+			line = 3,
+			scroll = 4
 		};
+
+		static enum class tooltipType : int {
+			none = 0,
+			warning = 1,
+			error = 2,
+			information = 3
+		};
+
 
 		static bool simulating;
 
 		static System::String ^ TooltipMessage;
 		static bool TooltipVisible;
+		static tooltipType TooltipMode;
 		static Point TooltipPos;
+
+		static void Tooltip(System::String ^ s, tooltipType m) {
+			TooltipMode = m;
+			TooltipVisible = true;
+			TooltipMessage = s;
+		}
+
+		static void Tooltip(System::String ^ s) {
+			Tooltip(s,tooltipType::none);
+		}
+
+		static void TooltipHide(){
+			TooltipMode = tooltipType::none;
+			TooltipVisible = false;
+		}
+
 
 		static Pin * mouseOverPin = 0;
 		static Line * mouseOverLine = 0;
@@ -46,5 +72,9 @@ value class PS {
 		static dragType dragMode;
 
 		static double zoom;
+		static Point scroll;
+		static Point scrollStart;
+
+		static int splitWindowPos;
 };
 

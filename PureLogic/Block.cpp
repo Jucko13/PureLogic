@@ -28,24 +28,31 @@ std::string Block::getName() {
 
 void Block::draw(Graphics ^g) {
 	
-	if (PS::keys->Alt || PS::keys->Control || PS::keys->Shift) {
-		g->DrawString(gcnew System::String(name.c_str()), ColorStyle::fontFamily, ColorStyle::brushNormal, pos.X + pos.Width / 2, pos.Y - ColorStyle::fontFamily->Size, ColorStyle::fontFormatCenter);
+	Rectangle rect = getPos();
+	rect.X += PS::scroll.X;
+	rect.Y += PS::scroll.Y;
+
+
+	if (PS::keys->Alt) {
+		g->DrawString(gcnew System::String(name.c_str()), ColorStyle::fontFamily, ColorStyle::brushNormal, rect.X + rect.Width / 2, rect.Y - ColorStyle::fontFamily->Size, ColorStyle::fontFormatCenter);
 	}
 
 	if (!selected) return;
 	if (PS::dragMode == PS::dragType::moving) return;
 
-	g->FillRectangle(ColorStyle::brushSelected, pos.X - 3 + posOffset.X, pos.Y - 3 + posOffset.Y, 6, 6);
-	g->DrawRectangle(ColorStyle::penNormal, pos.X - 3 + posOffset.X, pos.Y - 3 + posOffset.Y, 6, 6);
+	
 
-	g->FillRectangle(ColorStyle::brushSelected, pos.X + pos.Width - 3 + posOffset.X, pos.Y - 3 + posOffset.Y, 6, 6);
-	g->DrawRectangle(ColorStyle::penNormal, pos.X + pos.Width - 3 + posOffset.X, pos.Y - 3 + posOffset.Y, 6, 6);
+	g->FillRectangle(ColorStyle::brushSelected, rect.X - 3 , rect.Y - 3 , 6, 6);
+	g->DrawRectangle(ColorStyle::penNormal, rect.X - 3 , rect.Y - 3, 6, 6);
 
-	g->FillRectangle(ColorStyle::brushSelected, pos.X - 3 + posOffset.X, pos.Y + pos.Height - 3 + posOffset.Y, 6, 6);
-	g->DrawRectangle(ColorStyle::penNormal, pos.X - 3 + posOffset.X, pos.Y + pos.Height - 3 + posOffset.Y, 6, 6);
+	g->FillRectangle(ColorStyle::brushSelected, rect.X + rect.Width - 3 , rect.Y - 3, 6, 6);
+	g->DrawRectangle(ColorStyle::penNormal, rect.X + rect.Width - 3 , rect.Y - 3, 6, 6);
 
-	g->FillRectangle(ColorStyle::brushSelected, pos.X + pos.Width - 3 + posOffset.X, pos.Y + pos.Height - 3 + posOffset.Y, 6, 6);
-	g->DrawRectangle(ColorStyle::penNormal, pos.X + pos.Width - 3 + posOffset.X, pos.Y + pos.Height - 3 + posOffset.Y, 6, 6);
+	g->FillRectangle(ColorStyle::brushSelected, rect.X - 3 , rect.Y + rect.Height - 3 , 6, 6);
+	g->DrawRectangle(ColorStyle::penNormal, rect.X - 3, rect.Y + rect.Height - 3 , 6, 6);
+
+	g->FillRectangle(ColorStyle::brushSelected, rect.X + rect.Width - 3 , rect.Y + rect.Height - 3, 6, 6);
+	g->DrawRectangle(ColorStyle::penNormal, rect.X + rect.Width - 3, rect.Y + rect.Height - 3, 6, 6);
 
 }
 
@@ -54,8 +61,12 @@ void Block::setPosOffset(Point p) {
 }
 
 void Block::setPosCalculateOffset() {
-	pos.X += posOffset.X;
-	pos.Y += posOffset.Y;
+	pos.X += posOffset.X / PS::zoom;
+	pos.Y += posOffset.Y / PS::zoom;
+
+	//pos.X -= pos.X % 10;
+	//pos.Y -= pos.Y % 10;
+
 	posOffset.X = 0;
 	posOffset.Y = 0;
 }
@@ -66,16 +77,16 @@ Pin * Block::getSelectedPin(Point p) {
 
 	for (Pin *i : inputs) {
 		pinpos = i->getPos();
-		if (pinpos.X - 4 <= p.X && pinpos.X + 14 >= p.X) {
-			if (p.Y <= pinpos.Y + 4 && p.Y >= pinpos.Y - 4) {
+		if (pinpos.X - 4 * PS::zoom <= p.X && pinpos.X + 14 * PS::zoom >= p.X) {
+			if (p.Y <= pinpos.Y + 4 * PS::zoom && p.Y >= pinpos.Y - 4 * PS::zoom) {
 				return i;
 			}
 		}
 	}
 	if (output) {
 		pinpos = output->getPos();
-		if (pinpos.X - 4 <= p.X && pinpos.X + 14 >= p.X) {
-			if (p.Y <= pinpos.Y + 4 && p.Y >= pinpos.Y - 4) {
+		if (pinpos.X - 4 * PS::zoom <= p.X && pinpos.X + 14 * PS::zoom >= p.X) {
+			if (p.Y <= pinpos.Y + 4 * PS::zoom && p.Y >= pinpos.Y - 4 * PS::zoom) {
 				return output;
 			}
 		}
@@ -97,7 +108,7 @@ void Block::pinRemove() {
 }
 
 Rectangle Block::getPos() {
-	return Rectangle(pos.X + posOffset.X, pos.Y + posOffset.Y, pos.Width, pos.Height);
+	return Rectangle(pos.X * PS::zoom + posOffset.X, pos.Y* PS::zoom + posOffset.Y, pos.Width * PS::zoom, pos.Height * PS::zoom);
 }
 
 //void Block::setColors(unsigned long  a, unsigned long  i, unsigned long  n, unsigned long  b) {

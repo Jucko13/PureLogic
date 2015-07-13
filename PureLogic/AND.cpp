@@ -29,18 +29,18 @@ void AND::pinAdd() {
 }
 
 void AND::mouseDown(Point p) {
-	if (PS::simulating) {
-		selected = true;
-	}else{
-		Point ^relative = gcnew Point(p.X - pos.X, p.Y - pos.Y);
+	if(PS::simulating) return;
+	if (PS::keys->Control || PS::keys->Shift) return;
+	Rectangle rect = getPos();
+	Point ^relative = gcnew Point(p.X - rect.X, p.Y - rect.Y);
 
-		if (relative->Y > pos.Height - 16 && relative->Y < pos.Height) {
-			if (relative->X > 2 && relative->X < 10) {
-				pinAdd();
-			} else if (relative->X > 10 && relative->X < 18) {
-				pinRemove();
-			}
-		}
+	//PS::TooltipMessage = "X: " + relative->X + " Y:" + relative->Y;
+	//PS::TooltipVisible = true;
+	//return;
+	if (posPlus.Contains(p) ) {
+		pinAdd();
+	} else if (posMin.Contains(p)){
+		pinRemove();
 	}
 }
 
@@ -91,16 +91,21 @@ void AND::draw(Graphics ^g) {
 	Brush ^b;
 	Pen ^p;
 
-	pos.Height = (inputs.size()-1) * 10 + 20;
+	pos.Height = (inputs.size() - 1) * 10 + 20;
 	if (pos.Height < 20) pos.Height = 20;
 	pos.Width = 20;
 
 	Rectangle rect = getPos();
+	rect.X += PS::scroll.X;
+	rect.Y += PS::scroll.Y;
+
 
 	//rect.X *= PS::zoom;
 	//rect.Y *= PS::zoom;
 	//rect.Width *= PS::zoom;
 	//rect.Height *= PS::zoom;
+
+	
 
 
 	output->draw(g);
@@ -110,7 +115,7 @@ void AND::draw(Graphics ^g) {
 	}
 
 	//draw background of block
-	g->FillRectangle(ColorStyle::brushBack, rect.X, rect.Y, rect.Width, rect.Height); //35
+	g->FillRectangle(ColorStyle::brushBack, rect); //35
 
 	//draw border of block
 	if (PS::simulating) {
@@ -125,27 +130,39 @@ void AND::draw(Graphics ^g) {
 		p = ColorStyle::penNormal;
 		b = ColorStyle::brushNormal;
 	}
-	g->DrawRectangle(p, rect.X, rect.Y, rect.Width, rect.Height); //35
+	g->DrawRectangle(p, rect); //35
 
+	posPlus.Width = 10 * PS::zoom - 3;
+	posPlus.Height = posPlus.Width;
+	posPlus.X = rect.X + 2;
+	posPlus.Y = rect.Y + rect.Height - 10 * PS::zoom - posPlus.Width / 2;
+	
+	posMin.Height = posPlus.Height;
+	posMin.Width = posPlus.Height;
+	posMin.X = rect.X + rect.Width - 2 - posPlus.Width;
+	posMin.Y = posPlus.Y;
 
 	if (!PS::simulating){
 		int inputsize = inputs.size();
 
 		if (inputsize >= pinsMin && inputsize < pinsMax) {
 			if (!inputs[inputsize-1]->isConnected() && inputsize > pinsMin) {
-				g->DrawString("+-", ColorStyle::fontFamily, b, rect.X-1, rect.Y + rect.Height , ColorStyle::fontFormatFar);
+				g->DrawLine(ColorStyle::penNormal, posPlus.X, posPlus.Y + posPlus.Height / 2, posPlus.X + posPlus.Width - 1, posPlus.Y + posPlus.Height / 2);
+				g->DrawLine(ColorStyle::penNormal, posPlus.X + posPlus.Width / 2, posPlus.Y, posPlus.X + posPlus.Width / 2, posPlus.Y + posPlus.Height - 1);
+
+				g->DrawLine(ColorStyle::penNormal, posMin.X, posMin.Y + posMin.Height / 2, posMin.X + posMin.Width - 1, posMin.Y + posMin.Height / 2);
 			} else {
-				g->DrawString("+", ColorStyle::fontFamily, b, Rectangle(rect.X, rect.Y, rect.Width, rect.Height), ColorStyle::fontFormatFar);
+				g->DrawLine(ColorStyle::penNormal, posPlus.X, posPlus.Y + posPlus.Height / 2, posPlus.X + posPlus.Width - 1, posPlus.Y + posPlus.Height / 2);
+				g->DrawLine(ColorStyle::penNormal, posPlus.X + posPlus.Width / 2, posPlus.Y, posPlus.X + posPlus.Width / 2, posPlus.Y + posPlus.Height - 1);
 			}
 		} else {
 			if (!inputs[inputsize-1]->isConnected()){
-				g->DrawString(" -", ColorStyle::fontFamily, b, Rectangle(rect.X, rect.Y, rect.Width, rect.Height), ColorStyle::fontFormatFar);
+				g->DrawLine(ColorStyle::penNormal, posMin.X, posMin.Y + posMin.Height / 2, posMin.X + posMin.Width - 1, posMin.Y + posMin.Height / 2);
 			}
 		}
 	}
 
 	g->DrawString("&", ColorStyle::fontFamily, b, Rectangle(rect.X, rect.Y, rect.Width, ColorStyle::fontFamily->Size), ColorStyle::fontFormatCenter);
-
 
 	Block::draw(g);
 }
