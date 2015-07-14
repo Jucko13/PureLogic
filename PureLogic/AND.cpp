@@ -89,6 +89,7 @@ bool AND::execute() {
 
 void AND::draw(Graphics ^g) {
 	Brush ^b;
+	Brush ^b2;
 	Pen ^p;
 
 	pos.Height = (inputs.size() - 1) * 10 + 20;
@@ -115,21 +116,28 @@ void AND::draw(Graphics ^g) {
 	}
 
 	//draw background of block
-	g->FillRectangle(ColorStyle::brushBack, rect); //35
+	
 
 	//draw border of block
 	if (PS::simulating) {
 		if (active) {
-			p = ColorStyle::penActive;
 			b = ColorStyle::brushActive;
 		} else {
 			p = ColorStyle::penInactive;
 			b = ColorStyle::brushInactive;
 		}
+		b2 = ColorStyle::brushBack;
+		p = ColorStyle::penBack;
 	}else {
 		p = ColorStyle::penNormal;
-		b = ColorStyle::brushNormal;
+		b = ColorStyle::brushBack;
+		b2 = ColorStyle::brushNormal;
 	}
+
+	g->FillRectangle(b, rect); //35
+	
+	
+
 	g->DrawRectangle(p, rect); //35
 
 	posPlus.Width = 10 * PS::zoom - 3;
@@ -147,22 +155,22 @@ void AND::draw(Graphics ^g) {
 
 		if (inputsize >= pinsMin && inputsize < pinsMax) {
 			if (!inputs[inputsize-1]->isConnected() && inputsize > pinsMin) {
-				g->DrawLine(ColorStyle::penNormal, posPlus.X, posPlus.Y + posPlus.Height / 2, posPlus.X + posPlus.Width - 1, posPlus.Y + posPlus.Height / 2);
-				g->DrawLine(ColorStyle::penNormal, posPlus.X + posPlus.Width / 2, posPlus.Y, posPlus.X + posPlus.Width / 2, posPlus.Y + posPlus.Height - 1);
+				g->DrawLine(ColorStyle::penBack, posPlus.X, posPlus.Y + posPlus.Height / 2, posPlus.X + posPlus.Width - 1, posPlus.Y + posPlus.Height / 2);
+				g->DrawLine(ColorStyle::penBack, posPlus.X + posPlus.Width / 2, posPlus.Y, posPlus.X + posPlus.Width / 2, posPlus.Y + posPlus.Height - 1);
 
-				g->DrawLine(ColorStyle::penNormal, posMin.X, posMin.Y + posMin.Height / 2, posMin.X + posMin.Width - 1, posMin.Y + posMin.Height / 2);
+				g->DrawLine(ColorStyle::penBack, posMin.X, posMin.Y + posMin.Height / 2, posMin.X + posMin.Width - 1, posMin.Y + posMin.Height / 2);
 			} else {
-				g->DrawLine(ColorStyle::penNormal, posPlus.X, posPlus.Y + posPlus.Height / 2, posPlus.X + posPlus.Width - 1, posPlus.Y + posPlus.Height / 2);
-				g->DrawLine(ColorStyle::penNormal, posPlus.X + posPlus.Width / 2, posPlus.Y, posPlus.X + posPlus.Width / 2, posPlus.Y + posPlus.Height - 1);
+				g->DrawLine(ColorStyle::penBack, posPlus.X, posPlus.Y + posPlus.Height / 2, posPlus.X + posPlus.Width - 1, posPlus.Y + posPlus.Height / 2);
+				g->DrawLine(ColorStyle::penBack, posPlus.X + posPlus.Width / 2, posPlus.Y, posPlus.X + posPlus.Width / 2, posPlus.Y + posPlus.Height - 1);
 			}
 		} else {
 			if (!inputs[inputsize-1]->isConnected()){
-				g->DrawLine(ColorStyle::penNormal, posMin.X, posMin.Y + posMin.Height / 2, posMin.X + posMin.Width - 1, posMin.Y + posMin.Height / 2);
+				g->DrawLine(ColorStyle::penBack, posMin.X, posMin.Y + posMin.Height / 2, posMin.X + posMin.Width - 1, posMin.Y + posMin.Height / 2);
 			}
 		}
 	}
 
-	g->DrawString("&", ColorStyle::fontFamily, b, Rectangle(rect.X, rect.Y, rect.Width, ColorStyle::fontFamily->Size), ColorStyle::fontFormatCenter);
+	g->DrawString("&", ColorStyle::fontFamily, b2, Rectangle(rect.X, rect.Y, rect.Width, ColorStyle::fontFamily->Size + 2), ColorStyle::fontFormatCenter);
 
 	Block::draw(g);
 }

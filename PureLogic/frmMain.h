@@ -71,8 +71,9 @@ namespace PureLogic {
 	private: System::Windows::Forms::SplitContainer^  splitWindow;
 
 		System::Windows::Forms::ListView^  lstComponents;
+	private: System::Windows::Forms::ImageList^  imgBlocksSmall;
 
-		System::Windows::Forms::ImageList^  imgBlocks;
+
 		System::Windows::Forms::Label^  label1;
 		System::Windows::Forms::Label^  lblComponentCollapse;
 
@@ -90,6 +91,7 @@ namespace PureLogic {
 	private: RotationLabel^  lblRotatedDescription;
 	private: System::Windows::Forms::ToolStripButton^  tcmdCut;
 	private: System::Windows::Forms::ToolStripSeparator^  toolStripSeparator1;
+	private: System::Windows::Forms::ImageList^  imgBlocksLarge;
 
 
 
@@ -106,45 +108,21 @@ namespace PureLogic {
 		void InitializeComponent(void)
 		{
 			this->components = (gcnew System::ComponentModel::Container());
-			System::Windows::Forms::ListViewItem^  listViewItem40 = (gcnew System::Windows::Forms::ListViewItem(L"hoi blokjehier"));
-			System::Windows::Forms::ListViewItem^  listViewItem41 = (gcnew System::Windows::Forms::ListViewItem(L"nog een b"));
-			System::Windows::Forms::ListViewItem^  listViewItem42 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem43 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem44 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem45 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem46 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem47 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem48 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem49 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem50 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem51 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem52 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem53 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem54 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem55 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem56 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem57 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem58 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem59 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem60 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem61 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem62 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem63 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem64 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem65 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem66 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem67 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem68 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem69 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem70 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem71 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem72 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem73 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem74 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem75 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem76 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem77 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
-			System::Windows::Forms::ListViewItem^  listViewItem78 = (gcnew System::Windows::Forms::ListViewItem(L"a"));
+			System::Windows::Forms::ListViewGroup^  listViewGroup1 = (gcnew System::Windows::Forms::ListViewGroup(L"Logic Gates", System::Windows::Forms::HorizontalAlignment::Center));
+			System::Windows::Forms::ListViewGroup^  listViewGroup2 = (gcnew System::Windows::Forms::ListViewGroup(L"Timers", System::Windows::Forms::HorizontalAlignment::Center));
+			System::Windows::Forms::ListViewGroup^  listViewGroup3 = (gcnew System::Windows::Forms::ListViewGroup(L"Counters", System::Windows::Forms::HorizontalAlignment::Left));
+			System::Windows::Forms::ListViewGroup^  listViewGroup4 = (gcnew System::Windows::Forms::ListViewGroup(L"Special Components", System::Windows::Forms::HorizontalAlignment::Left));
+			System::Windows::Forms::ListViewItem^  listViewItem1 = (gcnew System::Windows::Forms::ListViewItem(L"AND", 4));
+			System::Windows::Forms::ListViewItem^  listViewItem2 = (gcnew System::Windows::Forms::ListViewItem(L"OR", 0));
+			System::Windows::Forms::ListViewItem^  listViewItem3 = (gcnew System::Windows::Forms::ListViewItem(L"ON Timer", 3));
+			System::Windows::Forms::ListViewItem^  listViewItem4 = (gcnew System::Windows::Forms::ListViewItem(L"OFF Timer", 8));
+			System::Windows::Forms::ListViewItem^  listViewItem5 = (gcnew System::Windows::Forms::ListViewItem(L"Retentive ON Timer", 7));
+			System::Windows::Forms::ListViewItem^  listViewItem6 = (gcnew System::Windows::Forms::ListViewItem(L"AND Rising Edge"));
+			System::Windows::Forms::ListViewItem^  listViewItem7 = (gcnew System::Windows::Forms::ListViewItem(L"AND Faling Edge"));
+			System::Windows::Forms::ListViewItem^  listViewItem8 = (gcnew System::Windows::Forms::ListViewItem(L"UP Counter"));
+			System::Windows::Forms::ListViewItem^  listViewItem9 = (gcnew System::Windows::Forms::ListViewItem(L"DOWN Counter"));
+			System::Windows::Forms::ListViewItem^  listViewItem10 = (gcnew System::Windows::Forms::ListViewItem(L"Tag From TagList"));
+			System::Windows::Forms::ListViewItem^  listViewItem11 = (gcnew System::Windows::Forms::ListViewItem(L"Tag Output (=, R, S)"));
 			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(frmMain::typeid));
 			this->toolStripContainer1 = (gcnew System::Windows::Forms::ToolStripContainer());
 			this->splitWindow = (gcnew System::Windows::Forms::SplitContainer());
@@ -152,22 +130,25 @@ namespace PureLogic {
 			this->lblComponentCollapse = (gcnew System::Windows::Forms::Label());
 			this->lstComponents = (gcnew System::Windows::Forms::ListView());
 			this->columnHeader1 = (gcnew System::Windows::Forms::ColumnHeader());
-			this->imgBlocks = (gcnew System::Windows::Forms::ImageList(this->components));
+			this->imgBlocksLarge = (gcnew System::Windows::Forms::ImageList(this->components));
+			this->imgBlocksSmall = (gcnew System::Windows::Forms::ImageList(this->components));
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->label2 = (gcnew System::Windows::Forms::Label());
-			this->toolsView = (gcnew System::Windows::Forms::ToolStrip());
-			this->tlblZoom = (gcnew System::Windows::Forms::ToolStripLabel());
-			this->tcmbZoom = (gcnew System::Windows::Forms::ToolStripComboBox());
 			this->toolsEdit = (gcnew System::Windows::Forms::ToolStrip());
 			this->tcmdOpen = (gcnew System::Windows::Forms::ToolStripButton());
 			this->tcmdSave = (gcnew System::Windows::Forms::ToolStripButton());
+			this->toolStripSeparator1 = (gcnew System::Windows::Forms::ToolStripSeparator());
 			this->tcmdCopy = (gcnew System::Windows::Forms::ToolStripButton());
+			this->tcmdCut = (gcnew System::Windows::Forms::ToolStripButton());
 			this->tcmdPaste = (gcnew System::Windows::Forms::ToolStripButton());
 			this->tcmdDelete = (gcnew System::Windows::Forms::ToolStripButton());
 			this->toolsSimulate = (gcnew System::Windows::Forms::ToolStrip());
 			this->tcmdSimulateStart = (gcnew System::Windows::Forms::ToolStripButton());
 			this->tcmdSimulateStop = (gcnew System::Windows::Forms::ToolStripButton());
+			this->toolsView = (gcnew System::Windows::Forms::ToolStrip());
+			this->tlblZoom = (gcnew System::Windows::Forms::ToolStripLabel());
+			this->tcmbZoom = (gcnew System::Windows::Forms::ToolStripComboBox());
 			this->sStatus = (gcnew System::Windows::Forms::StatusStrip());
 			this->lblStatusSpring = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->lblStatusCtrl = (gcnew System::Windows::Forms::ToolStripStatusLabel());
@@ -176,8 +157,6 @@ namespace PureLogic {
 			this->lblRotatedComponents = (gcnew RotationLabel());
 			this->lblRotatedDescription = (gcnew RotationLabel());
 			this->pBackground = (gcnew FlickerLessPanel());
-			this->tcmdCut = (gcnew System::Windows::Forms::ToolStripButton());
-			this->toolStripSeparator1 = (gcnew System::Windows::Forms::ToolStripSeparator());
 			this->toolStripContainer1->ContentPanel->SuspendLayout();
 			this->toolStripContainer1->TopToolStripPanel->SuspendLayout();
 			this->toolStripContainer1->SuspendLayout();
@@ -189,9 +168,9 @@ namespace PureLogic {
 			this->splitComponents->Panel1->SuspendLayout();
 			this->splitComponents->Panel2->SuspendLayout();
 			this->splitComponents->SuspendLayout();
-			this->toolsView->SuspendLayout();
 			this->toolsEdit->SuspendLayout();
 			this->toolsSimulate->SuspendLayout();
+			this->toolsView->SuspendLayout();
 			this->sStatus->SuspendLayout();
 			this->SuspendLayout();
 			// 
@@ -274,6 +253,7 @@ namespace PureLogic {
 			this->lblComponentCollapse->BackColor = System::Drawing::Color::RoyalBlue;
 			this->lblComponentCollapse->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Pixel));
 			this->lblComponentCollapse->ForeColor = System::Drawing::Color::White;
+			this->lblComponentCollapse->ImageAlign = System::Drawing::ContentAlignment::TopLeft;
 			this->lblComponentCollapse->Location = System::Drawing::Point(201, -1);
 			this->lblComponentCollapse->Margin = System::Windows::Forms::Padding(4, 0, 4, 0);
 			this->lblComponentCollapse->Name = L"lblComponentCollapse";
@@ -292,80 +272,154 @@ namespace PureLogic {
 			this->lstComponents->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(1) { this->columnHeader1 });
 			this->lstComponents->FullRowSelect = true;
 			this->lstComponents->GridLines = true;
+			listViewGroup1->Header = L"Logic Gates";
+			listViewGroup1->HeaderAlignment = System::Windows::Forms::HorizontalAlignment::Center;
+			listViewGroup1->Name = L"lstGroupGates";
+			listViewGroup2->Header = L"Timers";
+			listViewGroup2->HeaderAlignment = System::Windows::Forms::HorizontalAlignment::Center;
+			listViewGroup2->Name = L"lstGroupTimers";
+			listViewGroup3->Header = L"Counters";
+			listViewGroup3->Name = L"lstGroupCounters";
+			listViewGroup4->Header = L"Special Components";
+			listViewGroup4->Name = L"lstGroupSpecial";
+			this->lstComponents->Groups->AddRange(gcnew cli::array< System::Windows::Forms::ListViewGroup^  >(4) {
+				listViewGroup1, listViewGroup2,
+listViewGroup3, listViewGroup4
+			});
 			this->lstComponents->HeaderStyle = System::Windows::Forms::ColumnHeaderStyle::None;
-			listViewItem40->StateImageIndex = 0;
-			this->lstComponents->Items->AddRange(gcnew cli::array< System::Windows::Forms::ListViewItem^  >(39) {
-				listViewItem40, listViewItem41,
-listViewItem42, listViewItem43, listViewItem44, listViewItem45, listViewItem46, listViewItem47, listViewItem48, listViewItem49,
-listViewItem50, listViewItem51, listViewItem52, listViewItem53, listViewItem54, listViewItem55, listViewItem56, listViewItem57,
-listViewItem58, listViewItem59, listViewItem60, listViewItem61, listViewItem62, listViewItem63, listViewItem64, listViewItem65,
-listViewItem66, listViewItem67, listViewItem68, listViewItem69, listViewItem70, listViewItem71, listViewItem72, listViewItem73,
-listViewItem74, listViewItem75, listViewItem76, listViewItem77, listViewItem78
+			this->lstComponents->HideSelection = false;
+			listViewItem1->Group = listViewGroup1;
+			listViewItem1->UseItemStyleForSubItems = false;
+			listViewItem2->Group = listViewGroup1;
+			listViewItem3->Group = listViewGroup2;
+			listViewItem4->Group = listViewGroup2;
+			listViewItem5->Group = listViewGroup2;
+			listViewItem6->Group = listViewGroup1;
+			listViewItem7->Group = listViewGroup1;
+			listViewItem8->Group = listViewGroup3;
+			listViewItem9->Group = listViewGroup3;
+			listViewItem10->Group = listViewGroup4;
+			listViewItem11->Group = listViewGroup4;
+			this->lstComponents->Items->AddRange(gcnew cli::array< System::Windows::Forms::ListViewItem^  >(11) {
+				listViewItem1, listViewItem2,
+listViewItem3, listViewItem4, listViewItem5, listViewItem6, listViewItem7, listViewItem8, listViewItem9, listViewItem10, listViewItem11
 			});
 			this->lstComponents->LabelWrap = false;
-			this->lstComponents->LargeImageList = this->imgBlocks;
+			this->lstComponents->LargeImageList = this->imgBlocksLarge;
 			this->lstComponents->Location = System::Drawing::Point(0, 30);
 			this->lstComponents->Margin = System::Windows::Forms::Padding(0);
+			this->lstComponents->MultiSelect = false;
 			this->lstComponents->Name = L"lstComponents";
 			this->lstComponents->Size = System::Drawing::Size(229, 550);
-			this->lstComponents->SmallImageList = this->imgBlocks;
+			this->lstComponents->SmallImageList = this->imgBlocksSmall;
 			this->lstComponents->TabIndex = 0;
 			this->lstComponents->UseCompatibleStateImageBehavior = false;
-			this->lstComponents->View = System::Windows::Forms::View::Details;
+			this->lstComponents->View = System::Windows::Forms::View::Tile;
 			// 
 			// columnHeader1
 			// 
+			this->columnHeader1->Text = L"";
 			this->columnHeader1->Width = 152;
 			// 
-			// imgBlocks
+			// imgBlocksLarge
 			// 
-			this->imgBlocks->ImageStream = (cli::safe_cast<System::Windows::Forms::ImageListStreamer^>(resources->GetObject(L"imgBlocks.ImageStream")));
-			this->imgBlocks->TransparentColor = System::Drawing::Color::Transparent;
-			this->imgBlocks->Images->SetKeyName(0, L"3d bar chart.png");
-			this->imgBlocks->Images->SetKeyName(1, L"Abort.png");
-			this->imgBlocks->Images->SetKeyName(2, L"About.png");
-			this->imgBlocks->Images->SetKeyName(3, L"Accounting.png");
-			this->imgBlocks->Images->SetKeyName(4, L"Address book.png");
-			this->imgBlocks->Images->SetKeyName(5, L"Alarm clock.png");
-			this->imgBlocks->Images->SetKeyName(6, L"Alarm.png");
-			this->imgBlocks->Images->SetKeyName(7, L"Alert.png");
-			this->imgBlocks->Images->SetKeyName(8, L"Alien.png");
-			this->imgBlocks->Images->SetKeyName(9, L"Anchor.png");
-			this->imgBlocks->Images->SetKeyName(10, L"Application.png");
-			this->imgBlocks->Images->SetKeyName(11, L"Apply.png");
-			this->imgBlocks->Images->SetKeyName(12, L"Back.png");
-			this->imgBlocks->Images->SetKeyName(13, L"Bad mark.png");
-			this->imgBlocks->Images->SetKeyName(14, L"Bee.png");
-			this->imgBlocks->Images->SetKeyName(15, L"Black bookmark.png");
-			this->imgBlocks->Images->SetKeyName(16, L"Black pin.png");
-			this->imgBlocks->Images->SetKeyName(17, L"Black tag.png");
-			this->imgBlocks->Images->SetKeyName(18, L"Blog.png");
-			this->imgBlocks->Images->SetKeyName(19, L"Blue bookmark.png");
-			this->imgBlocks->Images->SetKeyName(20, L"Blue key.png");
-			this->imgBlocks->Images->SetKeyName(21, L"Blue pin.png");
-			this->imgBlocks->Images->SetKeyName(22, L"Blue tag.png");
-			this->imgBlocks->Images->SetKeyName(23, L"Bomb.png");
-			this->imgBlocks->Images->SetKeyName(24, L"Bookmark.png");
-			this->imgBlocks->Images->SetKeyName(25, L"Boss.png");
-			this->imgBlocks->Images->SetKeyName(26, L"Bottom.png");
-			this->imgBlocks->Images->SetKeyName(27, L"Briefcase.png");
-			this->imgBlocks->Images->SetKeyName(28, L"Brush.png");
-			this->imgBlocks->Images->SetKeyName(29, L"Bubble.png");
-			this->imgBlocks->Images->SetKeyName(30, L"Buy.png");
-			this->imgBlocks->Images->SetKeyName(31, L"Calculator.png");
-			this->imgBlocks->Images->SetKeyName(32, L"Calendar.png");
-			this->imgBlocks->Images->SetKeyName(33, L"Cancel.png");
-			this->imgBlocks->Images->SetKeyName(34, L"Car key.png");
-			this->imgBlocks->Images->SetKeyName(35, L"CD.png");
-			this->imgBlocks->Images->SetKeyName(36, L"Clipboard.png");
-			this->imgBlocks->Images->SetKeyName(37, L"Clock.png");
-			this->imgBlocks->Images->SetKeyName(38, L"Comment.png");
-			this->imgBlocks->Images->SetKeyName(39, L"Company.png");
-			this->imgBlocks->Images->SetKeyName(40, L"Compass.png");
-			this->imgBlocks->Images->SetKeyName(41, L"Component.png");
-			this->imgBlocks->Images->SetKeyName(42, L"Computer.png");
-			this->imgBlocks->Images->SetKeyName(43, L"Copy.png");
-			this->imgBlocks->Images->SetKeyName(44, L"Create.png");
+			this->imgBlocksLarge->ImageStream = (cli::safe_cast<System::Windows::Forms::ImageListStreamer^>(resources->GetObject(L"imgBlocksLarge.ImageStream")));
+			this->imgBlocksLarge->TransparentColor = System::Drawing::Color::Transparent;
+			this->imgBlocksLarge->Images->SetKeyName(0, L"3d bar chart.png");
+			this->imgBlocksLarge->Images->SetKeyName(1, L"Abort.png");
+			this->imgBlocksLarge->Images->SetKeyName(2, L"About.png");
+			this->imgBlocksLarge->Images->SetKeyName(3, L"Accounting.png");
+			this->imgBlocksLarge->Images->SetKeyName(4, L"Address book.png");
+			this->imgBlocksLarge->Images->SetKeyName(5, L"Alarm clock.png");
+			this->imgBlocksLarge->Images->SetKeyName(6, L"Alarm.png");
+			this->imgBlocksLarge->Images->SetKeyName(7, L"Alert.png");
+			this->imgBlocksLarge->Images->SetKeyName(8, L"Alien.png");
+			this->imgBlocksLarge->Images->SetKeyName(9, L"Anchor.png");
+			this->imgBlocksLarge->Images->SetKeyName(10, L"Application.png");
+			this->imgBlocksLarge->Images->SetKeyName(11, L"Apply.png");
+			this->imgBlocksLarge->Images->SetKeyName(12, L"Back.png");
+			this->imgBlocksLarge->Images->SetKeyName(13, L"Bad mark.png");
+			this->imgBlocksLarge->Images->SetKeyName(14, L"Bee.png");
+			this->imgBlocksLarge->Images->SetKeyName(15, L"Black bookmark.png");
+			this->imgBlocksLarge->Images->SetKeyName(16, L"Black pin.png");
+			this->imgBlocksLarge->Images->SetKeyName(17, L"Black tag.png");
+			this->imgBlocksLarge->Images->SetKeyName(18, L"Blog.png");
+			this->imgBlocksLarge->Images->SetKeyName(19, L"Blue bookmark.png");
+			this->imgBlocksLarge->Images->SetKeyName(20, L"Blue key.png");
+			this->imgBlocksLarge->Images->SetKeyName(21, L"Blue pin.png");
+			this->imgBlocksLarge->Images->SetKeyName(22, L"Blue tag.png");
+			this->imgBlocksLarge->Images->SetKeyName(23, L"Bomb.png");
+			this->imgBlocksLarge->Images->SetKeyName(24, L"Bookmark.png");
+			this->imgBlocksLarge->Images->SetKeyName(25, L"Boss.png");
+			this->imgBlocksLarge->Images->SetKeyName(26, L"Bottom.png");
+			this->imgBlocksLarge->Images->SetKeyName(27, L"Briefcase.png");
+			this->imgBlocksLarge->Images->SetKeyName(28, L"Brush.png");
+			this->imgBlocksLarge->Images->SetKeyName(29, L"Bubble.png");
+			this->imgBlocksLarge->Images->SetKeyName(30, L"Buy.png");
+			this->imgBlocksLarge->Images->SetKeyName(31, L"Calculator.png");
+			this->imgBlocksLarge->Images->SetKeyName(32, L"Calendar.png");
+			this->imgBlocksLarge->Images->SetKeyName(33, L"Cancel.png");
+			this->imgBlocksLarge->Images->SetKeyName(34, L"Car key.png");
+			// 
+			// imgBlocksSmall
+			// 
+			this->imgBlocksSmall->ImageStream = (cli::safe_cast<System::Windows::Forms::ImageListStreamer^>(resources->GetObject(L"imgBlocksSmall.ImageStream")));
+			this->imgBlocksSmall->TransparentColor = System::Drawing::Color::Transparent;
+			this->imgBlocksSmall->Images->SetKeyName(0, L"3d bar chart.png");
+			this->imgBlocksSmall->Images->SetKeyName(1, L"Abort.png");
+			this->imgBlocksSmall->Images->SetKeyName(2, L"About.png");
+			this->imgBlocksSmall->Images->SetKeyName(3, L"Accounting.png");
+			this->imgBlocksSmall->Images->SetKeyName(4, L"Address book.png");
+			this->imgBlocksSmall->Images->SetKeyName(5, L"Alarm clock.png");
+			this->imgBlocksSmall->Images->SetKeyName(6, L"Alarm.png");
+			this->imgBlocksSmall->Images->SetKeyName(7, L"Alert.png");
+			this->imgBlocksSmall->Images->SetKeyName(8, L"Alien.png");
+			this->imgBlocksSmall->Images->SetKeyName(9, L"Anchor.png");
+			this->imgBlocksSmall->Images->SetKeyName(10, L"Application.png");
+			this->imgBlocksSmall->Images->SetKeyName(11, L"Apply.png");
+			this->imgBlocksSmall->Images->SetKeyName(12, L"Back.png");
+			this->imgBlocksSmall->Images->SetKeyName(13, L"Bad mark.png");
+			this->imgBlocksSmall->Images->SetKeyName(14, L"Bee.png");
+			this->imgBlocksSmall->Images->SetKeyName(15, L"Black bookmark.png");
+			this->imgBlocksSmall->Images->SetKeyName(16, L"Black pin.png");
+			this->imgBlocksSmall->Images->SetKeyName(17, L"Black tag.png");
+			this->imgBlocksSmall->Images->SetKeyName(18, L"Blog.png");
+			this->imgBlocksSmall->Images->SetKeyName(19, L"Blue bookmark.png");
+			this->imgBlocksSmall->Images->SetKeyName(20, L"Blue key.png");
+			this->imgBlocksSmall->Images->SetKeyName(21, L"Blue pin.png");
+			this->imgBlocksSmall->Images->SetKeyName(22, L"Blue tag.png");
+			this->imgBlocksSmall->Images->SetKeyName(23, L"Bomb.png");
+			this->imgBlocksSmall->Images->SetKeyName(24, L"Bookmark.png");
+			this->imgBlocksSmall->Images->SetKeyName(25, L"Boss.png");
+			this->imgBlocksSmall->Images->SetKeyName(26, L"Bottom.png");
+			this->imgBlocksSmall->Images->SetKeyName(27, L"Briefcase.png");
+			this->imgBlocksSmall->Images->SetKeyName(28, L"Brush.png");
+			this->imgBlocksSmall->Images->SetKeyName(29, L"Bubble.png");
+			this->imgBlocksSmall->Images->SetKeyName(30, L"Buy.png");
+			this->imgBlocksSmall->Images->SetKeyName(31, L"Calculator.png");
+			this->imgBlocksSmall->Images->SetKeyName(32, L"Calendar.png");
+			this->imgBlocksSmall->Images->SetKeyName(33, L"Cancel.png");
+			this->imgBlocksSmall->Images->SetKeyName(34, L"Car key.png");
+			this->imgBlocksSmall->Images->SetKeyName(35, L"CD.png");
+			this->imgBlocksSmall->Images->SetKeyName(36, L"Clipboard.png");
+			this->imgBlocksSmall->Images->SetKeyName(37, L"Clock.png");
+			this->imgBlocksSmall->Images->SetKeyName(38, L"Comment.png");
+			this->imgBlocksSmall->Images->SetKeyName(39, L"Company.png");
+			this->imgBlocksSmall->Images->SetKeyName(40, L"Compass.png");
+			this->imgBlocksSmall->Images->SetKeyName(41, L"Component.png");
+			this->imgBlocksSmall->Images->SetKeyName(42, L"Computer.png");
+			this->imgBlocksSmall->Images->SetKeyName(43, L"Copy.png");
+			this->imgBlocksSmall->Images->SetKeyName(44, L"Create.png");
+			this->imgBlocksSmall->Images->SetKeyName(45, L"Cut.png");
+			this->imgBlocksSmall->Images->SetKeyName(46, L"Danger.png");
+			this->imgBlocksSmall->Images->SetKeyName(47, L"Database.png");
+			this->imgBlocksSmall->Images->SetKeyName(48, L"Delete.png");
+			this->imgBlocksSmall->Images->SetKeyName(49, L"Delivery.png");
+			this->imgBlocksSmall->Images->SetKeyName(50, L"Diagram.png");
+			this->imgBlocksSmall->Images->SetKeyName(51, L"Dial.png");
+			this->imgBlocksSmall->Images->SetKeyName(52, L"Disaster.png");
+			this->imgBlocksSmall->Images->SetKeyName(53, L"Display 16x16.png");
+			this->imgBlocksSmall->Images->SetKeyName(54, L"Dollar.png");
 			// 
 			// label1
 			// 
@@ -416,37 +470,6 @@ listViewItem74, listViewItem75, listViewItem76, listViewItem77, listViewItem78
 			this->label2->TextAlign = System::Drawing::ContentAlignment::MiddleLeft;
 			this->label2->UseCompatibleTextRendering = true;
 			// 
-			// toolsView
-			// 
-			this->toolsView->AllowMerge = false;
-			this->toolsView->Dock = System::Windows::Forms::DockStyle::None;
-			this->toolsView->ImageScalingSize = System::Drawing::Size(24, 24);
-			this->toolsView->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) { this->tlblZoom, this->tcmbZoom });
-			this->toolsView->Location = System::Drawing::Point(217, 0);
-			this->toolsView->Name = L"toolsView";
-			this->toolsView->Size = System::Drawing::Size(131, 25);
-			this->toolsView->TabIndex = 2;
-			// 
-			// tlblZoom
-			// 
-			this->tlblZoom->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Pixel));
-			this->tlblZoom->Name = L"tlblZoom";
-			this->tlblZoom->Size = System::Drawing::Size(42, 22);
-			this->tlblZoom->Text = L"Zoom:";
-			// 
-			// tcmbZoom
-			// 
-			this->tcmbZoom->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
-			this->tcmbZoom->DropDownWidth = 75;
-			this->tcmbZoom->FlatStyle = System::Windows::Forms::FlatStyle::System;
-			this->tcmbZoom->Font = (gcnew System::Drawing::Font(L"Segoe UI", 11, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Pixel));
-			this->tcmbZoom->Items->AddRange(gcnew cli::array< System::Object^  >(5) { L"60%", L"80%", L"100%", L"150%", L"200%" });
-			this->tcmbZoom->MergeAction = System::Windows::Forms::MergeAction::MatchOnly;
-			this->tcmbZoom->MergeIndex = 0;
-			this->tcmbZoom->Name = L"tcmbZoom";
-			this->tcmbZoom->Size = System::Drawing::Size(75, 25);
-			this->tcmbZoom->SelectedIndexChanged += gcnew System::EventHandler(this, &frmMain::tcmbZoom_OnSelectedIndexChanged);
-			// 
 			// toolsEdit
 			// 
 			this->toolsEdit->Dock = System::Windows::Forms::DockStyle::None;
@@ -482,6 +505,11 @@ this->toolStripSeparator1, this->tcmdCopy, this->tcmdCut, this->tcmdPaste, this-
 			this->tcmdSave->Text = L"Save";
 			this->tcmdSave->ToolTipText = L"Save (Ctrl + S)";
 			// 
+			// toolStripSeparator1
+			// 
+			this->toolStripSeparator1->Name = L"toolStripSeparator1";
+			this->toolStripSeparator1->Size = System::Drawing::Size(6, 25);
+			// 
 			// tcmdCopy
 			// 
 			this->tcmdCopy->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
@@ -492,6 +520,16 @@ this->toolStripSeparator1, this->tcmdCopy, this->tcmdCut, this->tcmdPaste, this-
 			this->tcmdCopy->Size = System::Drawing::Size(23, 22);
 			this->tcmdCopy->Text = L"Copy";
 			this->tcmdCopy->ToolTipText = L"Copy (Ctrl + C)";
+			// 
+			// tcmdCut
+			// 
+			this->tcmdCut->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
+			this->tcmdCut->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"tcmdCut.Image")));
+			this->tcmdCut->ImageTransparentColor = System::Drawing::Color::Magenta;
+			this->tcmdCut->Name = L"tcmdCut";
+			this->tcmdCut->Size = System::Drawing::Size(23, 22);
+			this->tcmdCut->Text = L"Cut";
+			this->tcmdCut->ToolTipText = L"Cut (Ctrl + X)";
 			// 
 			// tcmdPaste
 			// 
@@ -552,6 +590,37 @@ this->tcmdSimulateStop
 			this->tcmdSimulateStop->Text = L"toolStripButton1";
 			this->tcmdSimulateStop->ToolTipText = L"Stop Simulator (F3)";
 			this->tcmdSimulateStop->Click += gcnew System::EventHandler(this, &frmMain::tcmdSimulateStop_Click);
+			// 
+			// toolsView
+			// 
+			this->toolsView->AllowMerge = false;
+			this->toolsView->Dock = System::Windows::Forms::DockStyle::None;
+			this->toolsView->ImageScalingSize = System::Drawing::Size(24, 24);
+			this->toolsView->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) { this->tlblZoom, this->tcmbZoom });
+			this->toolsView->Location = System::Drawing::Point(217, 0);
+			this->toolsView->Name = L"toolsView";
+			this->toolsView->Size = System::Drawing::Size(131, 25);
+			this->toolsView->TabIndex = 2;
+			// 
+			// tlblZoom
+			// 
+			this->tlblZoom->Font = (gcnew System::Drawing::Font(L"Segoe UI", 12, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Pixel));
+			this->tlblZoom->Name = L"tlblZoom";
+			this->tlblZoom->Size = System::Drawing::Size(42, 22);
+			this->tlblZoom->Text = L"Zoom:";
+			// 
+			// tcmbZoom
+			// 
+			this->tcmbZoom->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->tcmbZoom->DropDownWidth = 75;
+			this->tcmbZoom->FlatStyle = System::Windows::Forms::FlatStyle::System;
+			this->tcmbZoom->Font = (gcnew System::Drawing::Font(L"Segoe UI", 11, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Pixel));
+			this->tcmbZoom->Items->AddRange(gcnew cli::array< System::Object^  >(5) { L"60%", L"80%", L"100%", L"150%", L"200%" });
+			this->tcmbZoom->MergeAction = System::Windows::Forms::MergeAction::MatchOnly;
+			this->tcmbZoom->MergeIndex = 0;
+			this->tcmbZoom->Name = L"tcmbZoom";
+			this->tcmbZoom->Size = System::Drawing::Size(75, 25);
+			this->tcmbZoom->SelectedIndexChanged += gcnew System::EventHandler(this, &frmMain::tcmbZoom_OnSelectedIndexChanged);
 			// 
 			// sStatus
 			// 
@@ -661,21 +730,6 @@ this->lblStatusAlt, this->lblStatusShift
 			this->pBackground->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::pBackground_MouseUp);
 			this->pBackground->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::pBackground_OnMouseWheel);
 			// 
-			// tcmdCut
-			// 
-			this->tcmdCut->DisplayStyle = System::Windows::Forms::ToolStripItemDisplayStyle::Image;
-			this->tcmdCut->Image = (cli::safe_cast<System::Drawing::Image^>(resources->GetObject(L"tcmdCut.Image")));
-			this->tcmdCut->ImageTransparentColor = System::Drawing::Color::Magenta;
-			this->tcmdCut->Name = L"tcmdCut";
-			this->tcmdCut->Size = System::Drawing::Size(23, 22);
-			this->tcmdCut->Text = L"Cut";
-			this->tcmdCut->ToolTipText = L"Cut (Ctrl + X)";
-			// 
-			// toolStripSeparator1
-			// 
-			this->toolStripSeparator1->Name = L"toolStripSeparator1";
-			this->toolStripSeparator1->Size = System::Drawing::Size(6, 25);
-			// 
 			// frmMain
 			// 
 			this->BackColor = System::Drawing::Color::Silver;
@@ -705,12 +759,12 @@ this->lblStatusAlt, this->lblStatusShift
 			this->splitComponents->Panel2->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitComponents))->EndInit();
 			this->splitComponents->ResumeLayout(false);
-			this->toolsView->ResumeLayout(false);
-			this->toolsView->PerformLayout();
 			this->toolsEdit->ResumeLayout(false);
 			this->toolsEdit->PerformLayout();
 			this->toolsSimulate->ResumeLayout(false);
 			this->toolsSimulate->PerformLayout();
+			this->toolsView->ResumeLayout(false);
+			this->toolsView->PerformLayout();
 			this->sStatus->ResumeLayout(false);
 			this->sStatus->PerformLayout();
 			this->ResumeLayout(false);

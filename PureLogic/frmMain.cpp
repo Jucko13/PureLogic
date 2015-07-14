@@ -213,7 +213,7 @@ void frmMain::timerRecursive_Tick(Object^ state, System::Timers::ElapsedEventArg
 
 		PS::refreshNeeded = true;
 
-		PS::Tooltip("count: " + s);
+		//PS::Tooltip("count: " + s);
 
 	}
 }
@@ -312,7 +312,8 @@ void frmMain::frmMain_Unload(Object^  sender, System::ComponentModel::CancelEven
 void frmMain::setZoomLevel(double newZoom) {
 	PS::zoom = newZoom;
 
-	ColorStyle::fontFamily = gcnew System::Drawing::Font("Courier New", (float)(14.0 * PS::zoom), System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Pixel);
+	ColorStyle::fontFamily = gcnew System::Drawing::Font("Courier", (float)(14.0 * PS::zoom), System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Pixel);
+	
 	lblStatusAlt->Font = gcnew System::Drawing::Font("Courier New", 12.0f, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Pixel);
 	lblStatusCtrl->Font = lblStatusAlt->Font;
 	lblStatusShift->Font = lblStatusAlt->Font;
@@ -482,6 +483,7 @@ void frmMain::pBackground_OnMouseWheel(Object^ sender, MouseEventArgs^  e) {
 void frmMain::pBackground_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
 	pBackground->Focus();
 	Point loc = Point(e->Location.X - PS::scroll.X, e->Location.Y - PS::scroll.Y);
+
 
 	if (e->Button == System::Windows::Forms::MouseButtons::Left) {
 
@@ -796,6 +798,7 @@ void frmMain::pBackground_Paint(Object^  sender, PaintEventArgs^  e) {
 	Drawing::Pen ^selectionBorder;  //= gcnew Pen(Color::FromArgb(0, 162, 232));
 
 	g->SmoothingMode = System::Drawing::Drawing2D::SmoothingMode::HighSpeed;
+	g->TextRenderingHint = System::Drawing::Text::TextRenderingHint::SingleBitPerPixelGridFit;
 	//g->PixelOffsetMode = System::Drawing::Drawing2D::PixelOffsetMode::HighSpeed;
 
 	//g->RenderingOrigin = Point(-50,-50);
@@ -880,6 +883,16 @@ void frmMain::pBackground_Paint(Object^  sender, PaintEventArgs^  e) {
 		}
 	}
 
-	//Application::DoEvents();
+	/*this creates an image for in the imagelist
+	
+	Bitmap ^ b = gcnew Bitmap(30,30,g);
+
+	Graphics ^ g1 = Graphics::FromImage(b);
+
+	g1->FillRectangle(ColorStyle::brushActive,0,0,30,30);
+
+	imgBlocksLarge->Images[0] = b;
+
+	*/
 }
 

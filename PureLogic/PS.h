@@ -76,5 +76,8 @@ value class PS {
 		static Point scrollStart;
 
 		static int splitWindowPos;
+
+
+		static int placeBlockType = 0;
 };
 

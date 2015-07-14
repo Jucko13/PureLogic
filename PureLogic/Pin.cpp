@@ -133,10 +133,15 @@ void Pin::draw(Graphics ^g) {
 	if (output) {
 		pos.X = offsetPos.X * PS::zoom + blockPos.X + blockPos.Width;
 		pos.Y = offsetPos.Y * PS::zoom + blockPos.Y;
+		g->DrawLine(p, pos.X, pos.Y, pos.X + pos.Width, pos.Y);
+
 		if (negate) g->FillRectangle(n, pos.X, pos.Y - int(1 * PS::zoom) - 1, int(3 * PS::zoom) + 2, int(3 * PS::zoom) + 2);
 	} else {
 		pos.X = offsetPos.X * PS::zoom + blockPos.X - 10 * PS::zoom;
 		pos.Y = offsetPos.Y * PS::zoom + blockPos.Y;
+
+		g->DrawLine(p, pos.X, pos.Y, pos.X + pos.Width, pos.Y);
+
 		if (negate) g->FillRectangle(n, offsetPos.X * PS::zoom + blockPos.X - 5 * PS::zoom, pos.Y - int(1 * PS::zoom) - 1, int(3 * PS::zoom) + 2, int(3 * PS::zoom) + 2);
 	}
 
@@ -145,14 +150,12 @@ void Pin::draw(Graphics ^g) {
 	pos.Width = 10 * PS::zoom;
 	pos.Height = 0;
 
-	g->DrawLine(p, pos.X, pos.Y, pos.X + pos.Width, pos.Y);
+	
 	
 
 
 	if (border) {
 		//g->DrawRectangle(ColorStyle::penInactive, Rectangle(pos.X - 4.0f * PS::zoom, pos.Y - 3.0f * PS::zoom, 18.0f * PS::zoom, 8.0f * PS::zoom - 1));
-		
-
 		g->DrawRectangle(ColorStyle::penInactive, Rectangle(pos.X - 1 - int(2 * PS::zoom), pos.Y - 1 - int(2 * PS::zoom), 2 + (10 + 4) * PS::zoom, 2 + 4 * PS::zoom));
 	}
 
