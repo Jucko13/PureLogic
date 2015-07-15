@@ -1,9 +1,13 @@
 #include "frmMain.h"
 
 #include "AND.h"
+#include "ANDR.h"
+#include "ANDF.h"
+#include "OR.h"
+#include "RS.h"
 #include "Block.h"
 #include "Line.h"
-#include "Input.h"
+#include "INPUT.h"
 #include "ColorStyle.h"
 #include "PS.h"
 #include <algorithm>
@@ -25,6 +29,10 @@ vector<Line *> connectionLines;
 vector<Block *> blocks;
 vector<Line *> recurse;
 
+vector<Block *> drawings;
+
+
+
 bool isRefreshing = false;
 
 int repeatCounter = 0;
@@ -39,6 +47,36 @@ int main(array<String^> ^args) {
 	Application::Run(%form);
 
 	return 0;
+}
+
+void frmMain::fillImageList(){
+	Bitmap ^ b;
+	Graphics ^ g;
+
+	drawings.push_back(new AND);
+	drawings.push_back(new OR);
+	drawings.push_back(new ANDR);
+	drawings.push_back(new ANDF);
+	drawings.push_back(new INPUT);
+
+	for (unsigned int i = 0; i < drawings.size(); i++){
+		drawings[i]->setPos(5, 0);
+
+		drawings[i]->execute();
+
+		b = gcnew Bitmap(32, 32, System::Drawing::Imaging::PixelFormat::Format32bppArgb);
+		g = Graphics::FromImage(b);
+
+		drawings[i]->draw(g);
+
+		imgBlocksLarge->Images->Add(b);
+		lstComponents->Items[i]->ImageIndex = i;
+		delete b;
+	}
+
+	//IndexOfKey("AND")
+
+
 }
 
 bool findRecursiveConnection(Pin * pStart, Pin * pEnd) {
@@ -114,23 +152,34 @@ void removeSelectedItems() {
 	}
 
 	for (unsigned int j = 0; j < connectionLines.size(); j++) {
-		if (connectionLines[j] != 0 && connectionLines[j]->selected) {
+		if (connectionLines[j] != NULL && connectionLines[j]->selected) {
 			if (connectionLines[j]->getRecursive()) {
 				for (unsigned int k = 0; k < recurse.size(); k++) {
-					if (recurse[k] == connectionLines[j]) {
-						recurse[k] = NULL;
+					if (recurse[k] != NULL){
+						if (recurse[k] == connectionLines[j]) {
+							recurse[k] = NULL;
+						}
 					}
 				}
 			}
-
-			delete connectionLines[j];
+			Line * l = connectionLines[j];
+			delete l;
 			connectionLines[j] = NULL;
 		}
 	}
 
+	
+	PS::mouseOverLine = NULL;
+	PS::mouseOverPin = NULL;
+	if (PS::dragMode != PS::dragType::line){
+		PS::dragStartPin = NULL;
+		PS::dragMode = PS::dragType::none;
+	}
 
-	blocks.erase(std::remove(blocks.begin(), blocks.end(), static_cast<Block*>(NULL)), blocks.end());
-	connectionLines.erase(std::remove(connectionLines.begin(), connectionLines.end(), static_cast<Line*>(NULL)), connectionLines.end());
+	blocks.erase(std::remove_if(blocks.begin(), blocks.end(), [](Block * bb) {return bb == NULL; }), blocks.end());
+	//connectionLines.erase(std::remove(connectionLines.begin(), connectionLines.end(), static_cast<Line*>(NULL)), connectionLines.end());
+	connectionLines.erase(std::remove_if(connectionLines.begin(), connectionLines.end(), [](Line * ll){return ll == NULL;}), connectionLines.end());
+	recurse.erase(std::remove_if(recurse.begin(), recurse.end(), [](Line * ll) {return ll == NULL; }), recurse.end());
 }
 
 bool getAbsoluteRectFromPoints(Point ^p1, Point ^p2, Rectangle *r) {
@@ -157,9 +206,9 @@ Pin * getPinAtPoint(Point p) {
 	Pin * pinReturn;
 	for (Block * b : blocks) {
 		pinReturn = b->getSelectedPin(p);
-		if (pinReturn != 0) break;
+		if (pinReturn != NULL) return pinReturn;
 	}
-	return pinReturn;
+	return NULL;
 }
 
 Line * getLineAtPoint(Point p) {
@@ -168,7 +217,7 @@ Line * getLineAtPoint(Point p) {
 			return l;
 		}
 	}
-	return 0;
+	return NULL;
 }
 
 Block * getBlockAtPoint(Point p) {
@@ -177,7 +226,7 @@ Block * getBlockAtPoint(Point p) {
 			return b;
 		}
 	}
-	return 0;
+	return NULL;
 }
 
 
@@ -228,7 +277,7 @@ void frmMain::timerRefresh_Tick(Object^ state, System::Timers::ElapsedEventArgs^
 }
 
 
-void frmMain::pBackground_KeyDown(Object^  sender, KeyEventArgs^ e) {
+void frmMain::frmMain_KeyDown(Object^  sender, KeyEventArgs^ e) {
 	PS::keys = e;
 
 	if (e->Shift) lblStatusShift->Text = "Shift";
@@ -266,7 +315,7 @@ void frmMain::pBackground_KeyDown(Object^  sender, KeyEventArgs^ e) {
 	PS::refreshNeeded = true;
 }
 
-void frmMain::pBackground_KeyUp(Object^  sender, KeyEventArgs^ e) {
+void frmMain::frmMain_KeyUp(Object^  sender, KeyEventArgs^ e) {
 	PS::keys = e;
 
 	if (!e->Shift) lblStatusShift->Text = "";
@@ -296,7 +345,7 @@ void frmMain::pBackground_KeyUp(Object^  sender, KeyEventArgs^ e) {
 }
 
 
-void frmMain::pBackground_KeyPress(Object^  sender, KeyPressEventArgs^ e) {
+void frmMain::frmMain_KeyPress(Object^  sender, KeyPressEventArgs^ e) {
 
 }
 
@@ -312,7 +361,7 @@ void frmMain::frmMain_Unload(Object^  sender, System::ComponentModel::CancelEven
 void frmMain::setZoomLevel(double newZoom) {
 	PS::zoom = newZoom;
 
-	ColorStyle::fontFamily = gcnew System::Drawing::Font("Courier", (float)(14.0 * PS::zoom), System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Pixel);
+	ColorStyle::fontFamily = gcnew System::Drawing::Font("Courier", (float)(9.0 * PS::zoom), System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Pixel);
 	
 	lblStatusAlt->Font = gcnew System::Drawing::Font("Courier New", 12.0f, System::Drawing::FontStyle::Regular, System::Drawing::GraphicsUnit::Pixel);
 	lblStatusCtrl->Font = lblStatusAlt->Font;
@@ -345,6 +394,9 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	ColorStyle::penMouseOver = gcnew Pen(ColorStyle::colorMouseOver);
 	ColorStyle::penSelected = gcnew Pen(ColorStyle::colorSelected);
 
+	//this->toolsEdit->Location = Point(3, 0);
+	//this->toolsSimulate->Location = Point(159, 0);
+	//this->toolsView->Location = Point(216, 0);
 
 	this->lstComponents->Columns[0]->AutoResize(System::Windows::Forms::ColumnHeaderAutoResizeStyle::ColumnContent);
 
@@ -354,6 +406,7 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	tcmbZoom->SelectedIndex = 2;
 	PS::scroll.X = 0;
 	PS::scroll.Y = 0;
+
 
 	lblStatusAlt->Text = "";
 	lblStatusCtrl->Text = "";
@@ -390,6 +443,8 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 
 	PS::keys = gcnew KeyEventArgs(System::Windows::Forms::Keys::None);
 
+	fillImageList();
+
 	int i = 0;
 	int j = 0;
 	int t = 0;
@@ -402,17 +457,17 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 		//connectionLines.push_back(new Line);
 		//connectionLines.push_back(new Line);
 
-		blocks.push_back(new Input); //inpu
+		blocks.push_back(new INPUT); //inpu
 		blocks[t]->setPos(50 + j * 250, 50 + (i / 4) * 70);
 		//blocks[t]->attachLine(connectionLines[t], -1, 1);
 		//blocks[t]->attachLine(connectionLines[t + 3], -1, 1);
 
 
-		blocks.push_back(new Input); //inpu2
+		blocks.push_back(new INPUT); //inpu2
 		blocks[t + 1]->setPos(50 + j * 250, 90 + (i / 4) * 70);
 		//blocks[t + 1]->attachLine(connectionLines[t + 1], -1, 1);
 
-		blocks.push_back(new AND); //mygate
+		blocks.push_back(new ANDR); //mygate
 		blocks[t + 2]->setPos(150 + j * 250, 50 + (i / 4) * 70);
 		//blocks[t + 2]->attachLine(connectionLines[t], -1, 0); //input
 		//blocks[t + 2]->pinAdd();
@@ -425,7 +480,7 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 		//blocks[t + 2]->attachLine(connectionLines[t + 2], -1, 1); //output
 		//blocks[t + 2]->attachLine(connectionLines[t + 3], -1, 0);
 
-		blocks.push_back(new AND); //mygate2
+		blocks.push_back(new RS); //mygate2
 		blocks[t + 3]->setPos(220 + j * 250, 50 + (i / 4) * 70);
 		//blocks[t + 3]->attachLine(connectionLines[t + 2], -1, 0);
 		t += 4;
@@ -481,20 +536,19 @@ void frmMain::pBackground_OnMouseWheel(Object^ sender, MouseEventArgs^  e) {
 }
 
 void frmMain::pBackground_MouseDown(System::Object^ sender, System::Windows::Forms::MouseEventArgs^ e) {
-	pBackground->Focus();
 	Point loc = Point(e->Location.X - PS::scroll.X, e->Location.Y - PS::scroll.Y);
+	Block * b = NULL;
+	Line * l = NULL;
+	
+	pBackground->Focus();
 
 
 	if (e->Button == System::Windows::Forms::MouseButtons::Left) {
 
+		l = getLineAtPoint(loc);
+		b = getBlockAtPoint(loc);
 
-		Block * b = getBlockAtPoint(loc);
-		if (b != 0)  b->mouseDown(e->Location);
-
-		Line * l = getLineAtPoint(loc);
-
-
-		if (((b != 0 && b->selected) || (l != 0 && l->selected)) && !PS::simulating && !PS::keys->Control) {
+		if (((b != NULL && b->selected) || (l != NULL && l->selected)) && !PS::simulating && !PS::keys->Control) {
 			PS::dragMode = PS::dragType::moving;
 		} else {
 			PS::dragMode = PS::dragType::selecting;
@@ -507,6 +561,8 @@ void frmMain::pBackground_MouseDown(System::Object^ sender, System::Windows::For
 		pBackground_MouseMove(sender, e);
 
 	} else if (e->Button == System::Windows::Forms::MouseButtons::Right) {
+		b = getBlockAtPoint(loc);
+		if (b != NULL)  b->mouseDown(e->Location);
 
 		PS::dragStartPin = getPinAtPoint(e->Location);
 		if (PS::dragStartPin != 0 && !PS::simulating) {
@@ -537,12 +593,13 @@ void frmMain::pBackground_MouseMove(System::Object^ sender, System::Windows::For
 	PS::dragCurrent = e->Location;
 
 	if (PS::dragMode == PS::dragType::none) {
-		if (PS::mouseOverLine != 0) {
+		if (PS::mouseOverLine != NULL) {
 			PS::mouseOverLine->setMouseOver(false);
+			PS::mouseOverLine = NULL;
 		}
 
 		PS::mouseOverLine = getLineAtPoint(PS::dragCurrent);
-		if (PS::mouseOverLine != 0) {
+		if (PS::mouseOverLine != NULL) {
 			PS::mouseOverLine->setMouseOver(true);
 		}
 	} else if (PS::dragMode == PS::dragType::moving) {
@@ -560,9 +617,9 @@ void frmMain::pBackground_MouseMove(System::Object^ sender, System::Windows::For
 		PS::scroll = Point(PS::scrollStart.X + (PS::dragCurrent.X - PS::dragStart.X), PS::scrollStart.Y + (PS::dragCurrent.Y - PS::dragStart.Y));
 	}
 
-	if (PS::mouseOverPin != 0) {
+	if (PS::mouseOverPin != NULL) {
 		PS::mouseOverPin->setBorder(false);
-		PS::mouseOverPin = 0;
+		PS::mouseOverPin = NULL;
 		PS::TooltipHide();
 	}
 
@@ -622,7 +679,7 @@ void frmMain::pBackground_MouseUp(System::Object^ sender, System::Windows::Forms
 
 	if (e->Button == System::Windows::Forms::MouseButtons::Left) {
 		for (Block * b : blocks) {
-			b->mouseUp(loc);
+			//b->mouseUp(loc);
 			if (!PS::keys->Control && !PS::keys->Shift && PS::dragMode != PS::dragType::moving) {
 				b->selected = false;
 			}
@@ -690,6 +747,21 @@ void frmMain::pBackground_MouseUp(System::Object^ sender, System::Windows::Forms
 		}
 
 	} else if (e->Button == System::Windows::Forms::MouseButtons::Right) {
+
+		for (Block * b : blocks) {
+			if(b->type == PS::blockTypes::INPUT){
+				if(PS::keys->KeyCode == Keys::Enter){
+					if(!b->selected){
+						b->mouseUp(loc);
+					}
+				}else{
+					b->mouseUp(loc);
+				}
+			}else{
+				b->mouseUp(loc);
+			}
+		}
+
 		if (!PS::simulating) {
 			PS::dragCurrent = e->Location;
 
@@ -748,6 +820,21 @@ void frmMain::pBackground_MouseUp(System::Object^ sender, System::Windows::Forms
 
 void frmMain::tcmdSimulateStart_Click(Object^  sender, EventArgs^  e) {
 	if (PS::simulating) return;
+
+	
+
+	for(Block * b: blocks){
+		if(b->type == PS::blockTypes::RS){
+			//bool tmp = b->inputs[1]->getState();
+			//b->inputs[1]->setState(true);
+			//b->execute();
+			//b->inputs[1]->setState(false);
+			//b->execute();
+			b->active = false;
+			b->output->setState(false);
+			b->execute();
+		}
+	}
 
 	//this->splitContainer1->Panel1Collapsed = !this->splitContainer1->Panel1Collapsed;
 	this->tcmdSimulateStart->Enabled = false;
@@ -869,15 +956,15 @@ void frmMain::pBackground_Paint(Object^  sender, PaintEventArgs^  e) {
 
 			switch (PS::TooltipMode) {
 				case PS::tooltipType::error:
-					g->DrawImage((safe_cast<Image^>(rm->GetObject(L"Error.png"))), tooltip.X + 6.0f, tooltip.Y + tooltip.Height / 2 - 8.0);
+					g->DrawImage((safe_cast<Image^>(rm->GetObject(L"Error.png"))), tooltip.X + 6.0f, tooltip.Y + tooltip.Height / 2 - 8.0f);
 					break;
 
 				case PS::tooltipType::information:
-					g->DrawImage((safe_cast<Image^>(rm->GetObject(L"Info.png"))), tooltip.X + 6.0f, tooltip.Y + tooltip.Height / 2 - 8.0);
+					g->DrawImage((safe_cast<Image^>(rm->GetObject(L"Info.png"))), tooltip.X + 6.0f, tooltip.Y + tooltip.Height / 2 - 8.0f);
 					break;
 
 				case PS::tooltipType::warning:
-					g->DrawImage((safe_cast<Image^>(rm->GetObject(L"Warning.png"))), tooltip.X + 6.0f, tooltip.Y + tooltip.Height / 2 - 8.0);
+					g->DrawImage((safe_cast<Image^>(rm->GetObject(L"Warning.png"))), tooltip.X + 6.0f, tooltip.Y + tooltip.Height / 2 - 8.0f);
 					break;
 			}
 		}

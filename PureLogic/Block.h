@@ -16,7 +16,7 @@ using std::vector;
 
 class Block abstract {
 	public:
-		Block(std::string n);
+		Block(std::string n, PS::blockTypes t);
 		virtual ~Block();
 
 		virtual bool execute() = 0;
@@ -47,10 +47,13 @@ class Block abstract {
 		bool pointInside(Point p);
 		std::string getName();
 		bool selected;
-
-	protected:
 		Rectangle pos;
+
+		const PS::blockTypes type;
+	protected:
+		
 		Point posOffset;
+		
 
 	private:
 		std::string name;

@@ -9,7 +9,7 @@ Block::~Block() {
 }
 
 
-Block::Block(std::string n) : name(n) {
+Block::Block(std::string n, PS::blockTypes t) : name(n), type(t) {
 	selected = false;
 	active = false;
 

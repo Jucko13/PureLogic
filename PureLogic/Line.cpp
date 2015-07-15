@@ -20,14 +20,14 @@ Line::Line(void (* f)(Line*)) {
 
 
 Line::~Line() {
-	if(Input != 0){
+	if (Input != NULL) {
 		Input->deatachLine(this);
-		Input = 0;
+		Input = NULL;
 	}
 
-	if (Output != 0) {
+	if (Output != NULL) {
 		Output->deatachLine(this);
-		Output = 0;
+		Output = NULL;
 	}
 }
 

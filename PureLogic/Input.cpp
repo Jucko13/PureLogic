@@ -1,28 +1,28 @@
-#include "Input.h"
+#include "INPUT.h"
 #include "Pin.h"
 
 using namespace System::Windows::Forms;
 
 using namespace System::Drawing;
 
-Input::Input() : Block("INPUT") {
+INPUT::INPUT() : Block("INPUT", PS::blockTypes::INPUT) {
 	output = new Pin(this,0,10,1);
 }
 
 
-Input::~Input() {
+INPUT::~INPUT() {
 
 }
 
 
-void Input::mouseDown(Point p) {
+void INPUT::mouseDown(Point p) {
 	if (PS::simulating) {
 		active = true;
 		execute();
 	}
 }
 
-void Input::mouseUp(Point p) {
+void INPUT::mouseUp(Point p) {
 	if (PS::simulating){
 		//MessageBox::Show("input!");
 		active = false;
@@ -30,11 +30,11 @@ void Input::mouseUp(Point p) {
 	}
 }
 
-void Input::mouseMove(Point p) {
+void INPUT::mouseMove(Point p) {
 	//MessageBox::Show("input!");
 }
 
-bool Input::execute() {
+bool INPUT::execute() {
 	/*for (Pin *i : inputs) {
 		if (i->getState() == false) {
 			active = false;
@@ -51,7 +51,7 @@ bool Input::execute() {
 	return true;
 }
 
-void Input::draw(Graphics ^g) {
+void INPUT::draw(Graphics ^g) {
 	Brush ^b;
 	Pen ^p;
 

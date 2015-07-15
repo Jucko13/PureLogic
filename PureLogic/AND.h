@@ -7,9 +7,10 @@ using namespace System::Drawing;
 class AND : public Block {
 	public:
 		AND();
+		AND(std::string, std::wstring, PS::blockTypes t);
 		virtual ~AND();
 
-		bool execute() override;
+		virtual bool execute() override;
 		void draw(Graphics ^g) override;
 
 		void pinAdd() override;
@@ -25,5 +26,7 @@ class AND : public Block {
 		const int pinsMax = 10;
 		Rectangle posPlus;
 		Rectangle posMin;
+		std::wstring mark;
+
 };
 

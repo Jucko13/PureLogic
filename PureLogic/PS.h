@@ -32,6 +32,15 @@ value class PS {
 			information = 3
 		};
 
+		static enum class blockTypes : int {
+			AND = 0,
+			OR = 1,
+			ANDR = 2,
+			ANDF = 3,
+			RS = 4,
+			INPUT = 5,
+			NONE = 999
+		};
 
 		static bool simulating;
 
@@ -78,6 +87,6 @@ value class PS {
 		static int splitWindowPos;
 
 
-		static int placeBlockType = 0;
+		static blockTypes placeBlockType = blockTypes::NONE;
 };
 

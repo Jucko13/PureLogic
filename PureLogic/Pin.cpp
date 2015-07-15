@@ -83,7 +83,10 @@ void Pin::deatachLine(Line *p){
 		}
 	}
 
-	lines.erase(std::remove(lines.begin(), lines.end(), static_cast<Line*>(NULL)), lines.end());
+	lines.erase(std::remove_if(lines.begin(), lines.end(), [](Line* ll){return ll == NULL;}), lines.end());
+
+
+	//lines.erase(std::remove(lines.begin(), lines.end(), static_cast<Line*>(NULL)), lines.end());
 }
 
 
@@ -130,6 +133,9 @@ void Pin::draw(Graphics ^g) {
 	//blockPos.Width *= PS::zoom;
 	//blockPos.Height *= PS::zoom;
 
+	pos.Width = 10 * PS::zoom;
+	pos.Height = 0;
+
 	if (output) {
 		pos.X = offsetPos.X * PS::zoom + blockPos.X + blockPos.Width;
 		pos.Y = offsetPos.Y * PS::zoom + blockPos.Y;
@@ -144,14 +150,6 @@ void Pin::draw(Graphics ^g) {
 
 		if (negate) g->FillRectangle(n, offsetPos.X * PS::zoom + blockPos.X - 5 * PS::zoom, pos.Y - int(1 * PS::zoom) - 1, int(3 * PS::zoom) + 2, int(3 * PS::zoom) + 2);
 	}
-
-	
-
-	pos.Width = 10 * PS::zoom;
-	pos.Height = 0;
-
-	
-	
 
 
 	if (border) {

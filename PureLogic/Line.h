@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vcclr.h>
+//#include <vcclr.h>
 #include "Pin.h"
 class Pin;
 value class ColorStyle;
@@ -33,8 +33,8 @@ class Line {
 
 
 	private:
-		Pin * Input = 0;
-		Pin * Output = 0;
+		Pin * Input = NULL;
+		Pin * Output = NULL;
 		bool positive;
 		bool mouseOver;
 		bool recursive;

@@ -32,6 +32,18 @@
     <ClCompile Include="Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="OR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ANDR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ANDF.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RS.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="frmMain.h">
@@ -49,9 +61,6 @@
     <ClInclude Include="Pin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ColorStyle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -64,10 +73,26 @@
     <ClInclude Include="RotationLabel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="INPUT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ANDR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ANDF.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ImportantFiles.resx">
       <Filter>Recources</Filter>
     </EmbeddedResource>
+    <EmbeddedResource Include="frmMain.resx" />
   </ItemGroup>
 </Project>
