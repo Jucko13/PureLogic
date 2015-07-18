@@ -57,7 +57,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies />
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <EntryPointSymbol>main</EntryPointSymbol>
     </Link>
     <Manifest>
@@ -92,6 +92,7 @@
     <ClCompile Include="OR.cpp" />
     <ClCompile Include="Pin.cpp" />
     <ClCompile Include="RS.cpp" />
+    <ClCompile Include="TagShifting.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AND.h" />
@@ -110,6 +111,7 @@
     <ClInclude Include="PS.h" />
     <ClInclude Include="RotationLabel.h" />
     <ClInclude Include="RS.h" />
+    <ClInclude Include="TagShifting.h" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="frmMain.resx">

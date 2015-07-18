@@ -11,6 +11,8 @@
 #include "ColorStyle.h"
 #include "PS.h"
 #include <algorithm>
+#include "TagShifting.h"
+#include <iostream>
 
 
 using namespace System::Windows::Forms;
@@ -60,7 +62,11 @@ void frmMain::fillImageList(){
 	drawings.push_back(new INPUT);
 
 	for (unsigned int i = 0; i < drawings.size(); i++){
-		drawings[i]->setPos(5, 0);
+		if (drawings[i]->type == PS::blockTypes::INPUT){
+			drawings[i]->setPos(5, 5);
+		}else{
+			drawings[i]->setPos(5, 0);
+		}
 
 		drawings[i]->execute();
 
@@ -244,7 +250,7 @@ void addLineToQuery(Line * l) {
 	}
 	recurse.push_back(l);
 	//PS::refreshNeeded = true;
-	//MessageBox::Show("added!");
+	MessageBox::Show("added!");
 }
 
 void frmMain::timerRecursive_Tick(Object^ state, System::Timers::ElapsedEventArgs^ e) {
@@ -368,8 +374,133 @@ void frmMain::setZoomLevel(double newZoom) {
 	lblStatusShift->Font = lblStatusAlt->Font;
 }
 
+void frmMain::gridTagList_CellContentClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
+	
+}
+
+void frmMain::gridTagList_CellEndEdit(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
+	int row = e->RowIndex;
+	int cell = e->ColumnIndex;
+	String ^ s;
+	if (!String::IsNullOrEmpty(gridTagList->Rows[row]->Cells[cell]->FormattedValue->ToString())) {
+		s = gridTagList->Rows[row]->Cells[cell]->Value->ToString();
+	}else{
+		//check if whole row is empty
+		s = gcnew String("");
+	}
+
+
+	switch(cell){
+		case 0:
+			break;
+		case 1:
+			break;
+		case 2:
+			//validate input of address range
+			String ^ firstPart;
+			String ^ secondPart;
+			int addressByte;
+			int addressBit;
+
+			if(s->Contains(".")){
+				firstPart = s->Substring(0, s->IndexOf("."));
+				secondPart = s->Substring(s->IndexOf(".") + 1);
+				if (secondPart->Length != 1){
+					gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 200, 200);
+					return;
+				}
+
+				if (!int::TryParse(secondPart, addressBit)) {
+					gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 200, 200);
+					return;
+				}
+
+				if (addressBit < 0 || addressBit > 7) {
+					gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 200, 200);
+					return;
+				}
+
+				if (!int::TryParse(firstPart, addressByte)) {
+					gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 200, 200);
+					return;
+				}
+
+				if (addressByte < 0 || addressByte > 100) {
+					gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 200, 200);
+					return;
+				}
+
+			}else{ //address is complete number
+				int address;
+				if (!int::TryParse(s, addressByte)) {
+					gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255,200,200);
+					return;
+				}
+
+				if (addressByte < 0 || addressByte > 100) {
+					gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 200, 200);
+					return;
+				}
+			}
+
+			break;
+		case 3:
+			//re-evaluate all tag values (read them)
+			break;
+	}
+
+	gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 255, 255);
+}
+
+void frmMain::gridTagList_KeyPress(Object^ sender, KeyPressEventArgs^ e){
+	
+	
+}
+
+
 void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	//MessageBox::Show("Startup test");
+
+	//TagShifting<bool> b1;
+	//TagShifting<bool> b2;
+
+	//b1.setAdress(12);
+	//b2.setAdress(12);
+	//bool u1 = b1;
+	//bool u2 = b2;
+
+	//MessageBox::Show(u1.ToString());
+	//MessageBox::Show(u2.ToString());
+
+	//b1 = true;
+	//u1 = b1;
+	//u2 = b2;
+
+	//MessageBox::Show(u1.ToString());
+	//MessageBox::Show(u2.ToString());
+
+
+	/*lol.setAdress(0);
+	lol = 0;
+	int ijk = 0;
+	int bla = 0;
+
+	for (bla = 0; bla <= 1; bla++) {
+		lol = bla;
+		for(ijk = 0; ijk < 32; ijk++){
+			cout << lol.getBit(ijk);
+		}
+		cout << endl;
+	}*/
+
+	//lol.setBit(0,true);
+
+
+ 	//if(lol.getBit(1) == true){
+	//	MessageBox::Show("is 10!!");
+	//}
+	
+	//lol = lol2;
 
 	pBackground->BackColor = Color(Color::FromArgb(180, 180, 180));
 

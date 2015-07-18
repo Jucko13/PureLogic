@@ -12,15 +12,18 @@
     <Filter Include="Recources">
       <UniqueIdentifier>{993710a4-3e7f-4b55-95f2-6cfb56b481ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Gates">
+      <UniqueIdentifier>{b6720a37-f3db-4ac1-abb1-fcf6092176ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Gates">
+      <UniqueIdentifier>{a4c93af8-d49f-45a7-b36a-f59191dccd12}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="frmMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Block.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="AND.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Line.cpp">
@@ -32,16 +35,22 @@
     <ClCompile Include="Input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OR.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ANDR.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="AND.cpp">
+      <Filter>Source Files\Gates</Filter>
     </ClCompile>
     <ClCompile Include="ANDF.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Gates</Filter>
+    </ClCompile>
+    <ClCompile Include="ANDR.cpp">
+      <Filter>Source Files\Gates</Filter>
+    </ClCompile>
+    <ClCompile Include="OR.cpp">
+      <Filter>Source Files\Gates</Filter>
     </ClCompile>
     <ClCompile Include="RS.cpp">
+      <Filter>Source Files\Gates</Filter>
+    </ClCompile>
+    <ClCompile Include="TagShifting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,9 +59,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Block.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="AND.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Line.h">
@@ -76,16 +82,22 @@
     <ClInclude Include="INPUT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OR.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ANDR.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="AND.h">
+      <Filter>Header Files\Gates</Filter>
     </ClInclude>
     <ClInclude Include="ANDF.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Gates</Filter>
+    </ClInclude>
+    <ClInclude Include="ANDR.h">
+      <Filter>Header Files\Gates</Filter>
+    </ClInclude>
+    <ClInclude Include="OR.h">
+      <Filter>Header Files\Gates</Filter>
     </ClInclude>
     <ClInclude Include="RS.h">
+      <Filter>Header Files\Gates</Filter>
+    </ClInclude>
+    <ClInclude Include="TagShifting.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

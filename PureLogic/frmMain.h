@@ -33,6 +33,10 @@ namespace PureLogic {
 		void frmMain_KeyUp(Object^ sender, KeyEventArgs^ e);
 		void frmMain_KeyPress(Object^ sender, KeyPressEventArgs^ e);
 
+		void gridTagList_KeyPress(Object^ sender, KeyPressEventArgs^ e);
+		void gridTagList_CellContentClick(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e);
+		void gridTagList_CellEndEdit(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e);
+
 		void lblComponentCollapse_Click(System::Object^  sender, System::EventArgs^  e);
 
 		void tcmdSimulateStart_Click(Object^ sender, EventArgs^  e);
@@ -94,6 +98,40 @@ namespace PureLogic {
 		System::Windows::Forms::ToolStripButton^  tcmdCut;
 		System::Windows::Forms::ToolStripSeparator^  toolStripSeparator1;
 		System::Windows::Forms::ImageList^  imgBlocksLarge;
+	private: System::Windows::Forms::TabControl^  tabProgram;
+	private: System::Windows::Forms::TabPage^  tabPageLogics;
+	private: System::Windows::Forms::TabPage^  tabPageTagList;
+	private: System::Windows::Forms::DataGridView^  gridTagList;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  TagName;
+	private: System::Windows::Forms::DataGridViewComboBoxColumn^  TagDataType;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  TagMemoryPlace;
+	private: System::Windows::Forms::DataGridViewTextBoxColumn^  TagValue;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 		System::ComponentModel::IContainer^  components;
@@ -129,16 +167,17 @@ namespace PureLogic {
 			this->splitWindow = (gcnew System::Windows::Forms::SplitContainer());
 			this->splitComponents = (gcnew System::Windows::Forms::SplitContainer());
 			this->lblComponentCollapse = (gcnew System::Windows::Forms::Label());
-			this->lblRotatedComponents = (gcnew RotationLabel());
 			this->lstComponents = (gcnew System::Windows::Forms::ListView());
 			this->columnHeader1 = (gcnew System::Windows::Forms::ColumnHeader());
 			this->imgBlocksLarge = (gcnew System::Windows::Forms::ImageList(this->components));
 			this->imgBlocksSmall = (gcnew System::Windows::Forms::ImageList(this->components));
 			this->label1 = (gcnew System::Windows::Forms::Label());
-			this->lblRotatedDescription = (gcnew RotationLabel());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->label2 = (gcnew System::Windows::Forms::Label());
-			this->pBackground = (gcnew FlickerLessPanel());
+			this->tabProgram = (gcnew System::Windows::Forms::TabControl());
+			this->tabPageLogics = (gcnew System::Windows::Forms::TabPage());
+			this->tabPageTagList = (gcnew System::Windows::Forms::TabPage());
+			this->gridTagList = (gcnew System::Windows::Forms::DataGridView());
 			this->toolsEdit = (gcnew System::Windows::Forms::ToolStrip());
 			this->tcmdOpen = (gcnew System::Windows::Forms::ToolStripButton());
 			this->tcmdSave = (gcnew System::Windows::Forms::ToolStripButton());
@@ -158,6 +197,13 @@ namespace PureLogic {
 			this->lblStatusCtrl = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->lblStatusAlt = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->lblStatusShift = (gcnew System::Windows::Forms::ToolStripStatusLabel());
+			this->lblRotatedComponents = (gcnew RotationLabel());
+			this->lblRotatedDescription = (gcnew RotationLabel());
+			this->pBackground = (gcnew FlickerLessPanel());
+			this->TagName = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->TagDataType = (gcnew System::Windows::Forms::DataGridViewComboBoxColumn());
+			this->TagMemoryPlace = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->TagValue = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->toolStripContainer1->ContentPanel->SuspendLayout();
 			this->toolStripContainer1->TopToolStripPanel->SuspendLayout();
 			this->toolStripContainer1->SuspendLayout();
@@ -169,6 +215,10 @@ namespace PureLogic {
 			this->splitComponents->Panel1->SuspendLayout();
 			this->splitComponents->Panel2->SuspendLayout();
 			this->splitComponents->SuspendLayout();
+			this->tabProgram->SuspendLayout();
+			this->tabPageLogics->SuspendLayout();
+			this->tabPageTagList->SuspendLayout();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->gridTagList))->BeginInit();
 			this->toolsEdit->SuspendLayout();
 			this->toolsSimulate->SuspendLayout();
 			this->toolsView->SuspendLayout();
@@ -183,7 +233,7 @@ namespace PureLogic {
 			// 
 			this->toolStripContainer1->ContentPanel->Controls->Add(this->splitWindow);
 			this->toolStripContainer1->ContentPanel->Margin = System::Windows::Forms::Padding(4, 5, 4, 5);
-			this->toolStripContainer1->ContentPanel->Size = System::Drawing::Size(1174, 671);
+			this->toolStripContainer1->ContentPanel->Size = System::Drawing::Size(1174, 721);
 			this->toolStripContainer1->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->toolStripContainer1->LeftToolStripPanelVisible = false;
 			this->toolStripContainer1->Location = System::Drawing::Point(0, 0);
@@ -217,8 +267,8 @@ namespace PureLogic {
 			// 
 			// splitWindow.Panel2
 			// 
-			this->splitWindow->Panel2->Controls->Add(this->pBackground);
-			this->splitWindow->Size = System::Drawing::Size(1174, 671);
+			this->splitWindow->Panel2->Controls->Add(this->tabProgram);
+			this->splitWindow->Size = System::Drawing::Size(1174, 721);
 			this->splitWindow->SplitterDistance = 229;
 			this->splitWindow->SplitterWidth = 6;
 			this->splitWindow->TabIndex = 3;
@@ -244,8 +294,8 @@ namespace PureLogic {
 			this->splitComponents->Panel2->Controls->Add(this->textBox1);
 			this->splitComponents->Panel2->Controls->Add(this->label2);
 			this->splitComponents->Panel2MinSize = 53;
-			this->splitComponents->Size = System::Drawing::Size(229, 671);
-			this->splitComponents->SplitterDistance = 530;
+			this->splitComponents->Size = System::Drawing::Size(229, 721);
+			this->splitComponents->SplitterDistance = 580;
 			this->splitComponents->TabIndex = 3;
 			// 
 			// lblComponentCollapse
@@ -263,26 +313,6 @@ namespace PureLogic {
 			this->lblComponentCollapse->Text = L"<<";
 			this->lblComponentCollapse->TextAlign = System::Drawing::ContentAlignment::MiddleRight;
 			this->lblComponentCollapse->Click += gcnew System::EventHandler(this, &frmMain::lblComponentCollapse_Click);
-			// 
-			// lblRotatedComponents
-			// 
-			this->lblRotatedComponents->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
-						| System::Windows::Forms::AnchorStyles::Left));
-			this->lblRotatedComponents->BackColor = System::Drawing::Color::RoyalBlue;
-			this->lblRotatedComponents->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Pixel));
-			this->lblRotatedComponents->ForeColor = System::Drawing::Color::White;
-			this->lblRotatedComponents->Location = System::Drawing::Point(0, 0);
-			this->lblRotatedComponents->Margin = System::Windows::Forms::Padding(0);
-			this->lblRotatedComponents->Name = L"lblRotatedComponents";
-			this->lblRotatedComponents->NewText = L"Logic Components";
-			this->lblRotatedComponents->Padding = System::Windows::Forms::Padding(40, 10, 0, 0);
-			this->lblRotatedComponents->RotateAngle = 90;
-			this->lblRotatedComponents->Size = System::Drawing::Size(30, 530);
-			this->lblRotatedComponents->TabIndex = 2;
-			this->lblRotatedComponents->TextAlign = System::Drawing::ContentAlignment::MiddleLeft;
-			this->lblRotatedComponents->UseCompatibleTextRendering = true;
-			this->lblRotatedComponents->Visible = false;
-			this->lblRotatedComponents->Click += gcnew System::EventHandler(this, &frmMain::lblComponentCollapse_Click);
 			// 
 			// lstComponents
 			// 
@@ -333,7 +363,7 @@ listViewItem12
 			this->lstComponents->Margin = System::Windows::Forms::Padding(0);
 			this->lstComponents->MultiSelect = false;
 			this->lstComponents->Name = L"lstComponents";
-			this->lstComponents->Size = System::Drawing::Size(229, 500);
+			this->lstComponents->Size = System::Drawing::Size(229, 550);
 			this->lstComponents->SmallImageList = this->imgBlocksSmall;
 			this->lstComponents->TabIndex = 0;
 			this->lstComponents->UseCompatibleStateImageBehavior = false;
@@ -373,26 +403,6 @@ listViewItem12
 			this->label1->TextAlign = System::Drawing::ContentAlignment::MiddleLeft;
 			this->label1->UseCompatibleTextRendering = true;
 			// 
-			// lblRotatedDescription
-			// 
-			this->lblRotatedDescription->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
-						| System::Windows::Forms::AnchorStyles::Left));
-			this->lblRotatedDescription->BackColor = System::Drawing::Color::RoyalBlue;
-			this->lblRotatedDescription->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Pixel));
-			this->lblRotatedDescription->ForeColor = System::Drawing::Color::White;
-			this->lblRotatedDescription->Location = System::Drawing::Point(0, 0);
-			this->lblRotatedDescription->Margin = System::Windows::Forms::Padding(0);
-			this->lblRotatedDescription->Name = L"lblRotatedDescription";
-			this->lblRotatedDescription->NewText = L"Description";
-			this->lblRotatedDescription->Padding = System::Windows::Forms::Padding(10, 10, 0, 0);
-			this->lblRotatedDescription->RotateAngle = 90;
-			this->lblRotatedDescription->Size = System::Drawing::Size(30, 141);
-			this->lblRotatedDescription->TabIndex = 3;
-			this->lblRotatedDescription->TextAlign = System::Drawing::ContentAlignment::MiddleLeft;
-			this->lblRotatedDescription->UseCompatibleTextRendering = true;
-			this->lblRotatedDescription->Visible = false;
-			this->lblRotatedDescription->Click += gcnew System::EventHandler(this, &frmMain::lblComponentCollapse_Click);
-			// 
 			// textBox1
 			// 
 			this->textBox1->Anchor = static_cast<System::Windows::Forms::AnchorStyles>((((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
@@ -425,19 +435,58 @@ listViewItem12
 			this->label2->TextAlign = System::Drawing::ContentAlignment::MiddleLeft;
 			this->label2->UseCompatibleTextRendering = true;
 			// 
-			// pBackground
+			// tabProgram
 			// 
-			this->pBackground->Dock = System::Windows::Forms::DockStyle::Fill;
-			this->pBackground->Location = System::Drawing::Point(0, 0);
-			this->pBackground->Margin = System::Windows::Forms::Padding(4, 5, 4, 5);
-			this->pBackground->Name = L"pBackground";
-			this->pBackground->Size = System::Drawing::Size(939, 671);
-			this->pBackground->TabIndex = 2;
-			this->pBackground->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &frmMain::pBackground_Paint);
-			this->pBackground->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::pBackground_MouseDown);
-			this->pBackground->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::pBackground_MouseMove);
-			this->pBackground->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::pBackground_MouseUp);
-			this->pBackground->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::pBackground_OnMouseWheel);
+			this->tabProgram->Controls->Add(this->tabPageTagList);
+			this->tabProgram->Controls->Add(this->tabPageLogics);
+			this->tabProgram->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->tabProgram->ItemSize = System::Drawing::Size(100, 18);
+			this->tabProgram->Location = System::Drawing::Point(0, 0);
+			this->tabProgram->Name = L"tabProgram";
+			this->tabProgram->SelectedIndex = 0;
+			this->tabProgram->Size = System::Drawing::Size(939, 721);
+			this->tabProgram->SizeMode = System::Windows::Forms::TabSizeMode::Fixed;
+			this->tabProgram->TabIndex = 3;
+			// 
+			// tabPageLogics
+			// 
+			this->tabPageLogics->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
+			this->tabPageLogics->Controls->Add(this->pBackground);
+			this->tabPageLogics->Location = System::Drawing::Point(4, 22);
+			this->tabPageLogics->Name = L"tabPageLogics";
+			this->tabPageLogics->Padding = System::Windows::Forms::Padding(3);
+			this->tabPageLogics->Size = System::Drawing::Size(931, 695);
+			this->tabPageLogics->TabIndex = 0;
+			this->tabPageLogics->Text = L"Logics";
+			this->tabPageLogics->UseVisualStyleBackColor = true;
+			// 
+			// tabPageTagList
+			// 
+			this->tabPageTagList->Controls->Add(this->gridTagList);
+			this->tabPageTagList->Location = System::Drawing::Point(4, 22);
+			this->tabPageTagList->Name = L"tabPageTagList";
+			this->tabPageTagList->Padding = System::Windows::Forms::Padding(3);
+			this->tabPageTagList->Size = System::Drawing::Size(931, 695);
+			this->tabPageTagList->TabIndex = 1;
+			this->tabPageTagList->Text = L"Tag List";
+			this->tabPageTagList->UseVisualStyleBackColor = true;
+			// 
+			// gridTagList
+			// 
+			this->gridTagList->BorderStyle = System::Windows::Forms::BorderStyle::None;
+			this->gridTagList->ColumnHeadersHeightSizeMode = System::Windows::Forms::DataGridViewColumnHeadersHeightSizeMode::AutoSize;
+			this->gridTagList->Columns->AddRange(gcnew cli::array< System::Windows::Forms::DataGridViewColumn^  >(4) {
+				this->TagName,
+this->TagDataType, this->TagMemoryPlace, this->TagValue
+			});
+			this->gridTagList->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->gridTagList->Location = System::Drawing::Point(3, 3);
+			this->gridTagList->Name = L"gridTagList";
+			this->gridTagList->Size = System::Drawing::Size(925, 689);
+			this->gridTagList->TabIndex = 0;
+			this->gridTagList->CellContentClick += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &frmMain::gridTagList_CellContentClick);
+			this->gridTagList->CellEndEdit += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &frmMain::gridTagList_CellEndEdit);
+			this->gridTagList->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &frmMain::gridTagList_KeyPress);
 			// 
 			// toolsEdit
 			// 
@@ -447,7 +496,7 @@ listViewItem12
 this->toolStripSeparator1, this->tcmdCopy, this->tcmdCut, this->tcmdPaste, this->tcmdDelete
 			});
 			this->toolsEdit->LayoutStyle = System::Windows::Forms::ToolStripLayoutStyle::HorizontalStackWithOverflow;
-			this->toolsEdit->Location = System::Drawing::Point(3, 50);
+			this->toolsEdit->Location = System::Drawing::Point(3, 0);
 			this->toolsEdit->Name = L"toolsEdit";
 			this->toolsEdit->Size = System::Drawing::Size(156, 25);
 			this->toolsEdit->TabIndex = 0;
@@ -530,7 +579,7 @@ this->toolStripSeparator1, this->tcmdCopy, this->tcmdCut, this->tcmdPaste, this-
 				this->tcmdSimulateStart,
 this->tcmdSimulateStop
 			});
-			this->toolsSimulate->Location = System::Drawing::Point(93, 25);
+			this->toolsSimulate->Location = System::Drawing::Point(176, 0);
 			this->toolsSimulate->Name = L"toolsSimulate";
 			this->toolsSimulate->Padding = System::Windows::Forms::Padding(0);
 			this->toolsSimulate->Size = System::Drawing::Size(57, 25);
@@ -567,7 +616,7 @@ this->tcmdSimulateStop
 			this->toolsView->Dock = System::Windows::Forms::DockStyle::None;
 			this->toolsView->ImageScalingSize = System::Drawing::Size(24, 24);
 			this->toolsView->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) { this->tlblZoom, this->tcmbZoom });
-			this->toolsView->Location = System::Drawing::Point(19, 0);
+			this->toolsView->Location = System::Drawing::Point(244, 0);
 			this->toolsView->Name = L"toolsView";
 			this->toolsView->Size = System::Drawing::Size(131, 25);
 			this->toolsView->TabIndex = 2;
@@ -607,6 +656,7 @@ this->lblStatusAlt, this->lblStatusShift
 			this->sStatus->Size = System::Drawing::Size(1174, 25);
 			this->sStatus->TabIndex = 3;
 			this->sStatus->Text = L"statusStrip1";
+			this->sStatus->Visible = false;
 			// 
 			// lblStatusSpring
 			// 
@@ -643,6 +693,94 @@ this->lblStatusAlt, this->lblStatusShift
 			this->lblStatusShift->Size = System::Drawing::Size(50, 20);
 			this->lblStatusShift->Text = L"Shift";
 			// 
+			// lblRotatedComponents
+			// 
+			this->lblRotatedComponents->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+						| System::Windows::Forms::AnchorStyles::Left));
+			this->lblRotatedComponents->BackColor = System::Drawing::Color::RoyalBlue;
+			this->lblRotatedComponents->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Pixel));
+			this->lblRotatedComponents->ForeColor = System::Drawing::Color::White;
+			this->lblRotatedComponents->Location = System::Drawing::Point(0, 0);
+			this->lblRotatedComponents->Margin = System::Windows::Forms::Padding(0);
+			this->lblRotatedComponents->Name = L"lblRotatedComponents";
+			this->lblRotatedComponents->NewText = L"Logic Components";
+			this->lblRotatedComponents->Padding = System::Windows::Forms::Padding(40, 10, 0, 0);
+			this->lblRotatedComponents->RotateAngle = 90;
+			this->lblRotatedComponents->Size = System::Drawing::Size(30, 580);
+			this->lblRotatedComponents->TabIndex = 2;
+			this->lblRotatedComponents->TextAlign = System::Drawing::ContentAlignment::MiddleLeft;
+			this->lblRotatedComponents->UseCompatibleTextRendering = true;
+			this->lblRotatedComponents->Visible = false;
+			this->lblRotatedComponents->Click += gcnew System::EventHandler(this, &frmMain::lblComponentCollapse_Click);
+			// 
+			// lblRotatedDescription
+			// 
+			this->lblRotatedDescription->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
+						| System::Windows::Forms::AnchorStyles::Left));
+			this->lblRotatedDescription->BackColor = System::Drawing::Color::RoyalBlue;
+			this->lblRotatedDescription->Font = (gcnew System::Drawing::Font(L"Microsoft Sans Serif", 14, System::Drawing::FontStyle::Bold, System::Drawing::GraphicsUnit::Pixel));
+			this->lblRotatedDescription->ForeColor = System::Drawing::Color::White;
+			this->lblRotatedDescription->Location = System::Drawing::Point(0, 0);
+			this->lblRotatedDescription->Margin = System::Windows::Forms::Padding(0);
+			this->lblRotatedDescription->Name = L"lblRotatedDescription";
+			this->lblRotatedDescription->NewText = L"Description";
+			this->lblRotatedDescription->Padding = System::Windows::Forms::Padding(10, 10, 0, 0);
+			this->lblRotatedDescription->RotateAngle = 90;
+			this->lblRotatedDescription->Size = System::Drawing::Size(30, 141);
+			this->lblRotatedDescription->TabIndex = 3;
+			this->lblRotatedDescription->TextAlign = System::Drawing::ContentAlignment::MiddleLeft;
+			this->lblRotatedDescription->UseCompatibleTextRendering = true;
+			this->lblRotatedDescription->Visible = false;
+			this->lblRotatedDescription->Click += gcnew System::EventHandler(this, &frmMain::lblComponentCollapse_Click);
+			// 
+			// pBackground
+			// 
+			this->pBackground->Dock = System::Windows::Forms::DockStyle::Fill;
+			this->pBackground->Location = System::Drawing::Point(3, 3);
+			this->pBackground->Margin = System::Windows::Forms::Padding(4, 5, 4, 5);
+			this->pBackground->Name = L"pBackground";
+			this->pBackground->Size = System::Drawing::Size(925, 689);
+			this->pBackground->TabIndex = 2;
+			this->pBackground->Paint += gcnew System::Windows::Forms::PaintEventHandler(this, &frmMain::pBackground_Paint);
+			this->pBackground->MouseDown += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::pBackground_MouseDown);
+			this->pBackground->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::pBackground_MouseMove);
+			this->pBackground->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::pBackground_MouseUp);
+			this->pBackground->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::pBackground_OnMouseWheel);
+			// 
+			// TagName
+			// 
+			this->TagName->AutoSizeMode = System::Windows::Forms::DataGridViewAutoSizeColumnMode::Fill;
+			this->TagName->HeaderText = L"Tag Name";
+			this->TagName->Name = L"TagName";
+			// 
+			// TagDataType
+			// 
+			this->TagDataType->DisplayStyle = System::Windows::Forms::DataGridViewComboBoxDisplayStyle::Nothing;
+			this->TagDataType->FlatStyle = System::Windows::Forms::FlatStyle::System;
+			this->TagDataType->HeaderText = L"Data Type";
+			this->TagDataType->Items->AddRange(gcnew cli::array< System::Object^  >(6) {
+				L"Byte", L"Integer", L"Long", L"Bool", L"Double",
+L"Float"
+			});
+			this->TagDataType->Name = L"TagDataType";
+			this->TagDataType->Resizable = System::Windows::Forms::DataGridViewTriState::False;
+			this->TagDataType->SortMode = System::Windows::Forms::DataGridViewColumnSortMode::Automatic;
+			this->TagDataType->Width = 80;
+			// 
+			// TagMemoryPlace
+			// 
+			this->TagMemoryPlace->HeaderText = L"Address";
+			this->TagMemoryPlace->Name = L"TagMemoryPlace";
+			this->TagMemoryPlace->Resizable = System::Windows::Forms::DataGridViewTriState::False;
+			this->TagMemoryPlace->Width = 50;
+			// 
+			// TagValue
+			// 
+			this->TagValue->HeaderText = L"Value";
+			this->TagValue->MaxInputLength = 10;
+			this->TagValue->Name = L"TagValue";
+			this->TagValue->Resizable = System::Windows::Forms::DataGridViewTriState::False;
+			// 
 			// frmMain
 			// 
 			this->BackColor = System::Drawing::Color::Silver;
@@ -672,6 +810,10 @@ this->lblStatusAlt, this->lblStatusShift
 			this->splitComponents->Panel2->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitComponents))->EndInit();
 			this->splitComponents->ResumeLayout(false);
+			this->tabProgram->ResumeLayout(false);
+			this->tabPageLogics->ResumeLayout(false);
+			this->tabPageTagList->ResumeLayout(false);
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->gridTagList))->EndInit();
 			this->toolsEdit->ResumeLayout(false);
 			this->toolsEdit->PerformLayout();
 			this->toolsSimulate->ResumeLayout(false);
@@ -686,11 +828,12 @@ this->lblStatusAlt, this->lblStatusShift
 		}
 #pragma endregion
 
-private: System::Void pBackground_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+void pBackground_KeyUp(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 }
-private: System::Void pBackground_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
+void pBackground_KeyDown(System::Object^  sender, System::Windows::Forms::KeyEventArgs^  e) {
 }
-private: System::Void pBackground_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
+void pBackground_KeyPress(System::Object^  sender, System::Windows::Forms::KeyPressEventArgs^  e) {
 }
+
 };
 };
