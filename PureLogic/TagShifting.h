@@ -1,6 +1,5 @@
 #pragma once
 
-#include <bitset>
 #include <cstdint>
 
 #pragma pack(push, 1)
@@ -23,7 +22,7 @@ template <typename T>
 class TagShifting {
 	
 	public:
-		static char bits[100];
+		static char bitArray[105];
 
 		typedef union {
 			T valueType;
@@ -40,32 +39,31 @@ class TagShifting {
 			UNKNOWN = 99,
 			Integer = 0,
 			Bool = 1
+
 		};
 
 		void setAdress(int newAdress) {
-			if (newAdress < 500) {
+			if (newAdress < 100) {
 				bitPlace = newAdress;
 
-				value = reinterpret_cast<tData*>(bits + newAdress);
+				value = reinterpret_cast<tData*>(bitArray + newAdress);
 			}
 		};
 
+
+		void setBit(int,bool);
 		bool getBit(int);
-		void setBit(int, bool);
+
 
 		TagShifting(){
 			if (strcmp(typeid(T).name(), "int") == 0) {
 				type = TagType::Integer;
+			} else if (strcmp(typeid(T).name(), "bool") == 1){
+				for(int i = 0; i < 100; i++){
+					bitArray[i] = 0;
+				}
 			}
-			for(int i = 0; i < 100; i++){
-				bits[i] = 0;
-			}
-			//int i = sizeof(short);
-
-			//MessageBox::Show(i.ToString());
 		};
-
-		//void setAdress(int newAdress);
 
 		~TagShifting(){};
 
@@ -89,7 +87,7 @@ class TagShifting {
 
 using namespace System::Windows::Forms;
 
-template<typename T> char TagShifting<T>::bits[100];
+template<typename T> char TagShifting<T>::bitArray[105];
 
 
 template<typename T> TagShifting<T>& TagShifting<T>::operator=(const TagShifting<T>& v) {

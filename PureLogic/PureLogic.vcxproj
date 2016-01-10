@@ -85,8 +85,10 @@
     <ClCompile Include="AND.cpp" />
     <ClCompile Include="ANDF.cpp" />
     <ClCompile Include="ANDR.cpp" />
+    <ClCompile Include="backpanel.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="frmMain.cpp" />
+    <ClCompile Include="grid.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="OR.cpp" />

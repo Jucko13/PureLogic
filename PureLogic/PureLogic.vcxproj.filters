@@ -18,6 +18,9 @@
     <Filter Include="Source Files\Gates">
       <UniqueIdentifier>{a4c93af8-d49f-45a7-b36a-f59191dccd12}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\MainFunctions">
+      <UniqueIdentifier>{0bc299a5-1991-4f9c-92ec-0bbbe96351ce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="frmMain.cpp">
@@ -52,6 +55,12 @@
     </ClCompile>
     <ClCompile Include="TagShifting.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="grid.cpp">
+      <Filter>Source Files\MainFunctions</Filter>
+    </ClCompile>
+    <ClCompile Include="backpanel.cpp">
+      <Filter>Source Files\MainFunctions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

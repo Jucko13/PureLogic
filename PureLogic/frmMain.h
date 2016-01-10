@@ -134,6 +134,10 @@ namespace PureLogic {
 
 
 
+
+
+
+
 		System::ComponentModel::IContainer^  components;
 
 
@@ -175,9 +179,9 @@ namespace PureLogic {
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->tabProgram = (gcnew System::Windows::Forms::TabControl());
-			this->tabPageLogics = (gcnew System::Windows::Forms::TabPage());
 			this->tabPageTagList = (gcnew System::Windows::Forms::TabPage());
 			this->gridTagList = (gcnew System::Windows::Forms::DataGridView());
+			this->tabPageLogics = (gcnew System::Windows::Forms::TabPage());
 			this->toolsEdit = (gcnew System::Windows::Forms::ToolStrip());
 			this->tcmdOpen = (gcnew System::Windows::Forms::ToolStripButton());
 			this->tcmdSave = (gcnew System::Windows::Forms::ToolStripButton());
@@ -197,13 +201,13 @@ namespace PureLogic {
 			this->lblStatusCtrl = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->lblStatusAlt = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->lblStatusShift = (gcnew System::Windows::Forms::ToolStripStatusLabel());
-			this->lblRotatedComponents = (gcnew RotationLabel());
-			this->lblRotatedDescription = (gcnew RotationLabel());
-			this->pBackground = (gcnew FlickerLessPanel());
 			this->TagName = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->TagDataType = (gcnew System::Windows::Forms::DataGridViewComboBoxColumn());
 			this->TagMemoryPlace = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
 			this->TagValue = (gcnew System::Windows::Forms::DataGridViewTextBoxColumn());
+			this->lblRotatedComponents = (gcnew RotationLabel());
+			this->lblRotatedDescription = (gcnew RotationLabel());
+			this->pBackground = (gcnew FlickerLessPanel());
 			this->toolStripContainer1->ContentPanel->SuspendLayout();
 			this->toolStripContainer1->TopToolStripPanel->SuspendLayout();
 			this->toolStripContainer1->SuspendLayout();
@@ -216,9 +220,9 @@ namespace PureLogic {
 			this->splitComponents->Panel2->SuspendLayout();
 			this->splitComponents->SuspendLayout();
 			this->tabProgram->SuspendLayout();
-			this->tabPageLogics->SuspendLayout();
 			this->tabPageTagList->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->gridTagList))->BeginInit();
+			this->tabPageLogics->SuspendLayout();
 			this->toolsEdit->SuspendLayout();
 			this->toolsSimulate->SuspendLayout();
 			this->toolsView->SuspendLayout();
@@ -448,18 +452,6 @@ listViewItem12
 			this->tabProgram->SizeMode = System::Windows::Forms::TabSizeMode::Fixed;
 			this->tabProgram->TabIndex = 3;
 			// 
-			// tabPageLogics
-			// 
-			this->tabPageLogics->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
-			this->tabPageLogics->Controls->Add(this->pBackground);
-			this->tabPageLogics->Location = System::Drawing::Point(4, 22);
-			this->tabPageLogics->Name = L"tabPageLogics";
-			this->tabPageLogics->Padding = System::Windows::Forms::Padding(3);
-			this->tabPageLogics->Size = System::Drawing::Size(931, 695);
-			this->tabPageLogics->TabIndex = 0;
-			this->tabPageLogics->Text = L"Logics";
-			this->tabPageLogics->UseVisualStyleBackColor = true;
-			// 
 			// tabPageTagList
 			// 
 			this->tabPageTagList->Controls->Add(this->gridTagList);
@@ -488,6 +480,18 @@ this->TagDataType, this->TagMemoryPlace, this->TagValue
 			this->gridTagList->CellEndEdit += gcnew System::Windows::Forms::DataGridViewCellEventHandler(this, &frmMain::gridTagList_CellEndEdit);
 			this->gridTagList->KeyPress += gcnew System::Windows::Forms::KeyPressEventHandler(this, &frmMain::gridTagList_KeyPress);
 			// 
+			// tabPageLogics
+			// 
+			this->tabPageLogics->BackgroundImageLayout = System::Windows::Forms::ImageLayout::None;
+			this->tabPageLogics->Controls->Add(this->pBackground);
+			this->tabPageLogics->Location = System::Drawing::Point(4, 22);
+			this->tabPageLogics->Name = L"tabPageLogics";
+			this->tabPageLogics->Padding = System::Windows::Forms::Padding(3);
+			this->tabPageLogics->Size = System::Drawing::Size(931, 695);
+			this->tabPageLogics->TabIndex = 0;
+			this->tabPageLogics->Text = L"Logics";
+			this->tabPageLogics->UseVisualStyleBackColor = true;
+			// 
 			// toolsEdit
 			// 
 			this->toolsEdit->Dock = System::Windows::Forms::DockStyle::None;
@@ -498,7 +502,8 @@ this->toolStripSeparator1, this->tcmdCopy, this->tcmdCut, this->tcmdPaste, this-
 			this->toolsEdit->LayoutStyle = System::Windows::Forms::ToolStripLayoutStyle::HorizontalStackWithOverflow;
 			this->toolsEdit->Location = System::Drawing::Point(3, 0);
 			this->toolsEdit->Name = L"toolsEdit";
-			this->toolsEdit->Size = System::Drawing::Size(156, 25);
+			this->toolsEdit->Padding = System::Windows::Forms::Padding(0);
+			this->toolsEdit->Size = System::Drawing::Size(186, 25);
 			this->toolsEdit->TabIndex = 0;
 			// 
 			// tcmdOpen
@@ -579,7 +584,7 @@ this->toolStripSeparator1, this->tcmdCopy, this->tcmdCut, this->tcmdPaste, this-
 				this->tcmdSimulateStart,
 this->tcmdSimulateStop
 			});
-			this->toolsSimulate->Location = System::Drawing::Point(176, 0);
+			this->toolsSimulate->Location = System::Drawing::Point(202, 0);
 			this->toolsSimulate->Name = L"toolsSimulate";
 			this->toolsSimulate->Padding = System::Windows::Forms::Padding(0);
 			this->toolsSimulate->Size = System::Drawing::Size(57, 25);
@@ -616,9 +621,10 @@ this->tcmdSimulateStop
 			this->toolsView->Dock = System::Windows::Forms::DockStyle::None;
 			this->toolsView->ImageScalingSize = System::Drawing::Size(24, 24);
 			this->toolsView->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) { this->tlblZoom, this->tcmbZoom });
-			this->toolsView->Location = System::Drawing::Point(244, 0);
+			this->toolsView->Location = System::Drawing::Point(274, 0);
 			this->toolsView->Name = L"toolsView";
-			this->toolsView->Size = System::Drawing::Size(131, 25);
+			this->toolsView->Padding = System::Windows::Forms::Padding(0);
+			this->toolsView->Size = System::Drawing::Size(130, 25);
 			this->toolsView->TabIndex = 2;
 			// 
 			// tlblZoom
@@ -693,6 +699,37 @@ this->lblStatusAlt, this->lblStatusShift
 			this->lblStatusShift->Size = System::Drawing::Size(50, 20);
 			this->lblStatusShift->Text = L"Shift";
 			// 
+			// TagName
+			// 
+			this->TagName->AutoSizeMode = System::Windows::Forms::DataGridViewAutoSizeColumnMode::Fill;
+			this->TagName->HeaderText = L"Tag Name";
+			this->TagName->Name = L"TagName";
+			// 
+			// TagDataType
+			// 
+			this->TagDataType->DisplayStyle = System::Windows::Forms::DataGridViewComboBoxDisplayStyle::Nothing;
+			this->TagDataType->FlatStyle = System::Windows::Forms::FlatStyle::System;
+			this->TagDataType->HeaderText = L"Data Type";
+			this->TagDataType->Items->AddRange(gcnew cli::array< System::Object^  >(5) { L"Bool", L"Byte", L"Short", L"Integer", L"Float" });
+			this->TagDataType->Name = L"TagDataType";
+			this->TagDataType->Resizable = System::Windows::Forms::DataGridViewTriState::False;
+			this->TagDataType->SortMode = System::Windows::Forms::DataGridViewColumnSortMode::Automatic;
+			this->TagDataType->Width = 80;
+			// 
+			// TagMemoryPlace
+			// 
+			this->TagMemoryPlace->HeaderText = L"Address";
+			this->TagMemoryPlace->Name = L"TagMemoryPlace";
+			this->TagMemoryPlace->Resizable = System::Windows::Forms::DataGridViewTriState::False;
+			this->TagMemoryPlace->Width = 50;
+			// 
+			// TagValue
+			// 
+			this->TagValue->HeaderText = L"Value";
+			this->TagValue->MaxInputLength = 10;
+			this->TagValue->Name = L"TagValue";
+			this->TagValue->Resizable = System::Windows::Forms::DataGridViewTriState::False;
+			// 
 			// lblRotatedComponents
 			// 
 			this->lblRotatedComponents->Anchor = static_cast<System::Windows::Forms::AnchorStyles>(((System::Windows::Forms::AnchorStyles::Top | System::Windows::Forms::AnchorStyles::Bottom)
@@ -747,40 +784,6 @@ this->lblStatusAlt, this->lblStatusShift
 			this->pBackground->MouseUp += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::pBackground_MouseUp);
 			this->pBackground->MouseWheel += gcnew System::Windows::Forms::MouseEventHandler(this, &frmMain::pBackground_OnMouseWheel);
 			// 
-			// TagName
-			// 
-			this->TagName->AutoSizeMode = System::Windows::Forms::DataGridViewAutoSizeColumnMode::Fill;
-			this->TagName->HeaderText = L"Tag Name";
-			this->TagName->Name = L"TagName";
-			// 
-			// TagDataType
-			// 
-			this->TagDataType->DisplayStyle = System::Windows::Forms::DataGridViewComboBoxDisplayStyle::Nothing;
-			this->TagDataType->FlatStyle = System::Windows::Forms::FlatStyle::System;
-			this->TagDataType->HeaderText = L"Data Type";
-			this->TagDataType->Items->AddRange(gcnew cli::array< System::Object^  >(6) {
-				L"Byte", L"Integer", L"Long", L"Bool", L"Double",
-L"Float"
-			});
-			this->TagDataType->Name = L"TagDataType";
-			this->TagDataType->Resizable = System::Windows::Forms::DataGridViewTriState::False;
-			this->TagDataType->SortMode = System::Windows::Forms::DataGridViewColumnSortMode::Automatic;
-			this->TagDataType->Width = 80;
-			// 
-			// TagMemoryPlace
-			// 
-			this->TagMemoryPlace->HeaderText = L"Address";
-			this->TagMemoryPlace->Name = L"TagMemoryPlace";
-			this->TagMemoryPlace->Resizable = System::Windows::Forms::DataGridViewTriState::False;
-			this->TagMemoryPlace->Width = 50;
-			// 
-			// TagValue
-			// 
-			this->TagValue->HeaderText = L"Value";
-			this->TagValue->MaxInputLength = 10;
-			this->TagValue->Name = L"TagValue";
-			this->TagValue->Resizable = System::Windows::Forms::DataGridViewTriState::False;
-			// 
 			// frmMain
 			// 
 			this->BackColor = System::Drawing::Color::Silver;
@@ -811,9 +814,9 @@ L"Float"
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->splitComponents))->EndInit();
 			this->splitComponents->ResumeLayout(false);
 			this->tabProgram->ResumeLayout(false);
-			this->tabPageLogics->ResumeLayout(false);
 			this->tabPageTagList->ResumeLayout(false);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->gridTagList))->EndInit();
+			this->tabPageLogics->ResumeLayout(false);
 			this->toolsEdit->ResumeLayout(false);
 			this->toolsEdit->PerformLayout();
 			this->toolsSimulate->ResumeLayout(false);

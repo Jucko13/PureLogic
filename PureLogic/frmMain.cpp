@@ -250,7 +250,7 @@ void addLineToQuery(Line * l) {
 	}
 	recurse.push_back(l);
 	//PS::refreshNeeded = true;
-	MessageBox::Show("added!");
+	//MessageBox::Show("added!");
 }
 
 void frmMain::timerRecursive_Tick(Object^ state, System::Timers::ElapsedEventArgs^ e) {
@@ -381,75 +381,106 @@ void frmMain::gridTagList_CellContentClick(System::Object^  sender, System::Wind
 void frmMain::gridTagList_CellEndEdit(System::Object^  sender, System::Windows::Forms::DataGridViewCellEventArgs^  e) {
 	int row = e->RowIndex;
 	int cell = e->ColumnIndex;
-	String ^ s;
-	if (!String::IsNullOrEmpty(gridTagList->Rows[row]->Cells[cell]->FormattedValue->ToString())) {
-		s = gridTagList->Rows[row]->Cells[cell]->Value->ToString();
-	}else{
-		//check if whole row is empty
-		s = gcnew String("");
-	}
+	array<System::String ^>^ strCell = gcnew array<System::String ^>(4);
 
+	bool cellEmpty = false;
 
-	switch(cell){
-		case 0:
-			break;
-		case 1:
-			break;
-		case 2:
-			//validate input of address range
-			String ^ firstPart;
-			String ^ secondPart;
-			int addressByte;
-			int addressBit;
-
-			if(s->Contains(".")){
-				firstPart = s->Substring(0, s->IndexOf("."));
-				secondPart = s->Substring(s->IndexOf(".") + 1);
-				if (secondPart->Length != 1){
-					gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 200, 200);
-					return;
-				}
-
-				if (!int::TryParse(secondPart, addressBit)) {
-					gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 200, 200);
-					return;
-				}
-
-				if (addressBit < 0 || addressBit > 7) {
-					gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 200, 200);
-					return;
-				}
-
-				if (!int::TryParse(firstPart, addressByte)) {
-					gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 200, 200);
-					return;
-				}
-
-				if (addressByte < 0 || addressByte > 100) {
-					gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 200, 200);
-					return;
-				}
-
-			}else{ //address is complete number
-				int address;
-				if (!int::TryParse(s, addressByte)) {
-					gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255,200,200);
-					return;
-				}
-
-				if (addressByte < 0 || addressByte > 100) {
-					gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 200, 200);
-					return;
-				}
+	for(int i = 0; i < 4; i++){
+		if (!String::IsNullOrEmpty(gridTagList->Rows[row]->Cells[i]->FormattedValue->ToString())) {
+			strCell[i] = gridTagList->Rows[row]->Cells[i]->Value->ToString();
+		}else{
+			if (i != 3){
+				gridTagList->Rows[row]->Cells[i]->Style->BackColor = Color::FromArgb(255, 200, 200);
+				cellEmpty = true;
 			}
+		}
+	}
+	if(cellEmpty) return;
 
-			break;
-		case 3:
-			//re-evaluate all tag values (read them)
-			break;
+	DataGridViewComboBoxCell ^ comb = reinterpret_cast<DataGridViewComboBoxCell^> (gridTagList->Rows[row]->Cells[1]);
+	int addressType = comb->Items->IndexOf(comb->Value);
+
+
+	//validate input of address range
+	String ^ firstPart;
+	String ^ secondPart;
+	int addressByte;
+	int addressBit;
+
+			
+
+	if (strCell[2]->Contains(".")) {
+
+		firstPart = strCell[2]->Substring(0, strCell[2]->IndexOf("."));
+		secondPart = strCell[2]->Substring(strCell[2]->IndexOf(".") + 1);
+		if (secondPart->Length != 1){
+			gridTagList->Rows[row]->ErrorText = "The bit address must be 0..7!";
+			gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 200, 200);
+			return;
+		}
+
+		if (!int::TryParse(secondPart, addressBit)) {
+			gridTagList->Rows[row]->ErrorText = "The bit address must be a number!";
+			gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 200, 200);
+			return;
+		}
+
+		if (addressBit < 0 || addressBit > 7) {
+			gridTagList->Rows[row]->ErrorText = "The bit address must be 0..7!";
+			gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 200, 200);
+			return;
+		}
+
+		if (!int::TryParse(firstPart, addressByte)) {
+			gridTagList->Rows[row]->ErrorText = "The byte address must be a number!";
+			gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 200, 200);
+			return;
+		}
+
+		if (addressByte < 0 || addressByte > 100) {
+			gridTagList->Rows[row]->ErrorText = "The byte address must be 0..100!";
+			gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 200, 200);
+			return;
+		}
+
+		if (addressType != 0) {
+			gridTagList->Rows[row]->Cells[1]->Style->BackColor = Color::FromArgb(255, 200, 200);
+			gridTagList->Rows[row]->Cells[2]->Style->BackColor = Color::FromArgb(255, 200, 200);
+
+			gridTagList->Rows[row]->ErrorText = "Only datatype that can be placed on " + addressByte + "." + addressBit + " is a Bool. Try " + addressByte + " instead!";
+			return;
+		}
+
+
+	}else{ //address is complete number
+		if (!int::TryParse(strCell[2], addressByte)) {
+			gridTagList->Rows[row]->ErrorText = "The byte address must be a number!";
+			gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255,200,200);
+			return;
+		}
+
+		if (addressByte < 0 || addressByte > 100) {
+			gridTagList->Rows[row]->ErrorText = "The byte address must be 0..100!";
+			gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 200, 200);
+			return;
+		}
+
+		if (addressType == 0) {
+			gridTagList->Rows[row]->Cells[1]->Style->BackColor = Color::FromArgb(255, 200, 200);
+			gridTagList->Rows[row]->Cells[2]->Style->BackColor = Color::FromArgb(255, 200, 200);
+
+			gridTagList->Rows[row]->ErrorText = "Datatype Bool cannot be placed on " + addressByte + ". Try " + +addressByte + ".0 instead!";
+			return;
+		}
 	}
 
-	gridTagList->Rows[row]->Cells[cell]->Style->BackColor = Color::FromArgb(255, 255, 255);
+	gridTagList->Rows[row]->ErrorText = "";
+	for (int i = 0; i < 4; i++) {
+		gridTagList->Rows[row]->Cells[i]->Style->BackColor = Color::FromArgb(255, 255, 255);
+	}
+
+	//trigger check for all rows do not have any red backgrounds.
+	//if check completed parse all the data and fill the value column.
 }
 
 void frmMain::gridTagList_KeyPress(Object^ sender, KeyPressEventArgs^ e){
@@ -464,7 +495,7 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 	//TagShifting<bool> b1;
 	//TagShifting<bool> b2;
 
-	//b1.setAdress(12);
+	//b1.setAdress(102);
 	//b2.setAdress(12);
 	//bool u1 = b1;
 	//bool u2 = b2;
@@ -598,7 +629,7 @@ void frmMain::frmMain_Load(System::Object^  sender, System::EventArgs^  e) {
 		blocks[t + 1]->setPos(50 + j * 250, 90 + (i / 4) * 70);
 		//blocks[t + 1]->attachLine(connectionLines[t + 1], -1, 1);
 
-		blocks.push_back(new ANDR); //mygate
+		blocks.push_back(new AND); //mygate
 		blocks[t + 2]->setPos(150 + j * 250, 50 + (i / 4) * 70);
 		//blocks[t + 2]->attachLine(connectionLines[t], -1, 0); //input
 		//blocks[t + 2]->pinAdd();

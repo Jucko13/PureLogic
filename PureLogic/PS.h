@@ -5,8 +5,6 @@
 
 #include <string>
 
-#include <cliext/vector>
-
 using namespace std;
 using namespace System::Drawing;
 
@@ -17,6 +15,7 @@ class Line;
 
 value class PS {
 	public:
+		
 		static enum class dragType: int {
 			none = 0,
 			selecting = 1,
